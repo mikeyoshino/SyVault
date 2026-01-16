@@ -1,0 +1,128 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    platform: linux/arm64
+    container_name: digitalvault-postgres
+    environment:
+      POSTGRES_DB: digitalvault
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Dev@Password123
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - digitalvault-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    platform: linux/arm64
+    container_name: digitalvault-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass Dev@Redis123
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    volumes:
+      - redis_data:/data
+    networks:
+      - digitalvault-network
+
+  # Azure Blob Storage Emulator (Azurite)
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    platform: linux/arm64
+    container_name: digitalvault-azurite
+    ports:
+      - "10000:10000"  # Blob service
+      - "10001:10001"  # Queue service
+      - "10002:10002"  # Table service
+    volumes:
+      - azurite_data:/data
+    command: azurite-blob --blobHost 0.0.0.0 --loose
+    networks:
+      - digitalvault-network
+
+  # SQL Server (Alternative to PostgreSQL)
+  # Uncomment if you prefer SQL Server over PostgreSQL
+  # sqlserver:
+  #   image: mcr.microsoft.com/mssql/server:2022-latest
+  #   container_name: digitalvault-sqlserver
+  #   environment:
+  #     ACCEPT_EULA: Y
+  #     SA_PASSWORD: Dev@SqlServer123!
+  #     MSSQL_PID: Developer
+  #   ports:
+  #     - "1433:1433"
+  #   volumes:
+  #     - sqlserver_data:/var/opt/mssql
+  #   networks:
+  #     - digitalvault-network
+
+  # MailHog (Email Testing) - ARM64 compatible alternative
+  mailpit:
+    image: axllent/mailpit:latest
+    platform: linux/arm64
+    container_name: digitalvault-mailpit
+    ports:
+      - "1025:1025"  # SMTP server
+      - "8025:8025"  # Web UI
+    networks:
+      - digitalvault-network
+
+  # Adminer (Database Management UI)
+  adminer:
+    image: adminer:latest
+    platform: linux/arm64
+    container_name: digitalvault-adminer
+    ports:
+      - "8082:8080"  # Changed to 8082 to avoid port conflict
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+    depends_on:
+      - postgres
+    networks:
+      - digitalvault-network
+
+  # Redis Insight (Redis Management UI) - ARM64 compatible alternative
+  redis-insight:
+    image: redis/redisinsight:latest
+    platform: linux/arm64
+    container_name: digitalvault-redis-insight
+    ports:
+      - "5540:5540"
+    volumes:
+      - redis_insight_data:/data
+    depends_on:
+      - redis
+    networks:
+      - digitalvault-network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  azurite_data:
+    driver: local
+  redis_insight_data:
+    driver: local
+  # sqlserver_data:
+  #   driver: local
+
+networks:
+  digitalvault-network:
+    driver: bridge

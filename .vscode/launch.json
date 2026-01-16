@@ -1,0 +1,116 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "🚀 API Server",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-api",
+            "program": "${workspaceFolder}/src/DigitalVault.API/bin/Debug/net8.0/DigitalVault.API.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/DigitalVault.API",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS": "http://localhost:5135"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            },
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        },
+        {
+            "name": "🌐 BFF Server (Web)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-bff",
+            "program": "${workspaceFolder}/src/DigitalVault.Web/bin/Debug/net8.0/DigitalVault.Web.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/DigitalVault.Web",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS": "http://localhost:5000"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            },
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        },
+        {
+            "name": "🎨 Blazor WebAssembly (Simple)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-blazor",
+            "program": "dotnet",
+            "args": [
+                "run",
+                "--project",
+                "${workspaceFolder}/src/DigitalVault.BlazorApp/DigitalVault.BlazorApp.csproj"
+            ],
+            "cwd": "${workspaceFolder}/src/DigitalVault.BlazorApp",
+            "stopAtEntry": false,
+            "console": "integratedTerminal",
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": "🎨 Blazor WebAssembly (Debug)",
+            "type": "blazorwasm",
+            "request": "launch",
+            "preLaunchTask": "build-blazor",
+            "cwd": "${workspaceFolder}/src/DigitalVault.BlazorApp",
+            "browser": "chrome",
+            "url": "http://localhost:5000/auth",
+            "timeout": 120000,
+            "webRoot": "${workspaceFolder}/src/DigitalVault.BlazorApp",
+            "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
+            "trace": true
+        },
+        {
+            "name": "🔗 Attach to Blazor",
+            "type": "blazorwasm",
+            "request": "attach",
+            "cwd": "${workspaceFolder}/src/DigitalVault.BlazorApp"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "⚡ Full Stack (BFF + API + Blazor)",
+            "configurations": [
+                "🚀 API Server",
+                "🌐 BFF Server (Web)",
+                "🎨 Blazor WebAssembly (Simple)"
+            ],
+            "stopAll": true,
+            "preLaunchTask": "build-all",
+            "presentation": {
+                "hidden": false,
+                "group": "fullstack",
+                "order": 1
+            },
+            "postDebugTask": "kill-all-servers"
+        },
+        {
+            "name": "🔧 Legacy (API + Blazor Direct)",
+            "configurations": [
+                "🚀 API Server",
+                "🎨 Blazor WebAssembly (Simple)"
+            ],
+            "stopAll": true,
+            "presentation": {
+                "hidden": false,
+                "group": "legacy",
+                "order": 2
+            }
+        }
+    ]
+}

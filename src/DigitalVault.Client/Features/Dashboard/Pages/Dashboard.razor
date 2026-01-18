@@ -1,0 +1,126 @@
+@page "/dashboard"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@using DigitalVault.Client.Shared.Layouts
+@layout DashboardLayout
+@inject NavigationManager Navigation
+
+<PageTitle>Dashboard - Trustworthy</PageTitle>
+
+<!-- Trust Score Card -->
+<div class="bg-slate-900 rounded-[32px] p-8 text-white relative overflow-hidden shadow-2xl mb-10">
+    <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
+        <div class="text-center md:text-left">
+            <h2 class="text-3xl font-black mb-4 leading-tight">
+                คะแนนความเชื่อมั่นของคุณ <br />
+                <span class="text-blue-400">อยู่ในระดับดีมาก</span>
+            </h2>
+            <p class="text-slate-400 text-sm max-w-sm mb-6">
+                คุณได้รวบรวมเอกสารสำคัญไปแล้ว 85% อีกนิดเดียวจะครบถ้วนสมบูรณ์
+            </p>
+            <button class="bg-blue-600 text-white px-8 py-3 rounded-2xl font-bold hover:bg-blue-500 transition-all">
+                ปรับปรุงข้อมูล
+            </button>
+        </div>
+        <div class="relative">
+            <svg class="w-40 h-40 transform -rotate-90">
+                <circle cx="80" cy="80" r="70" stroke="rgba(255,255,255,0.05)" stroke-width="12" fill="transparent" />
+                <circle cx="80" cy="80" r="70" stroke="#3b82f6" stroke-width="12" fill="transparent"
+                    stroke-dasharray="440" stroke-dashoffset="66" stroke-linecap="round" />
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+                <span class="text-4xl font-black">85%</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Category Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    <!-- Family Card -->
+    <div class="category-card bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group"
+        @onclick="@(() => Navigation.NavigateTo("/beneficiaries"))">
+        <div class="flex justify-between items-start mb-6">
+            <div class="p-3 rounded-2xl bg-indigo-50">
+                <i class="fas fa-users text-indigo-600 text-2xl"></i>
+            </div>
+            <button class="text-slate-300 hover:text-slate-500 transition-colors">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+        </div>
+        <h3 class="font-bold text-slate-800 text-lg">ครอบครัว</h3>
+        <div class="flex items-center justify-between mt-2">
+            <p class="text-sm text-slate-400 font-medium">4 รายการ</p>
+            <div
+                class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:bg-blue-50 transition-all">
+                <i class="fas fa-chevron-right text-blue-600"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Financial Card -->
+    <div
+        class="category-card bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+        <div class="flex justify-between items-start mb-6">
+            <div class="p-3 rounded-2xl bg-emerald-50">
+                <i class="fas fa-wallet text-emerald-600 text-2xl"></i>
+            </div>
+            <button class="text-slate-300 hover:text-slate-500 transition-colors">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+        </div>
+        <h3 class="font-bold text-slate-800 text-lg">การเงิน</h3>
+        <div class="flex items-center justify-between mt-2">
+            <p class="text-sm text-slate-400 font-medium">12 รายการ</p>
+            <div
+                class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:bg-blue-50 transition-all">
+                <i class="fas fa-chevron-right text-blue-600"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Health Card -->
+    <div
+        class="category-card bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+        <div class="flex justify-between items-start mb-6">
+            <div class="p-3 rounded-2xl bg-rose-50">
+                <i class="fas fa-heart text-rose-600 text-2xl"></i>
+            </div>
+            <button class="text-slate-300 hover:text-slate-500 transition-colors">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+        </div>
+        <h3 class="font-bold text-slate-800 text-lg">สุขภาพ</h3>
+        <div class="flex items-center justify-between mt-2">
+            <p class="text-sm text-slate-400 font-medium">8 รายการ</p>
+            <div
+                class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:bg-blue-50 transition-all">
+                <i class="fas fa-chevron-right text-blue-600"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Property Card -->
+    <div class="category-card bg-white p-5 rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group"
+        @onclick="@(() => Navigation.NavigateTo("/land-records"))">
+        <div class="flex justify-between items-start mb-6">
+            <div class="p-3 rounded-2xl bg-amber-50">
+                <i class="fas fa-home text-amber-600 text-2xl"></i>
+            </div>
+            <button class="text-slate-300 hover:text-slate-500 transition-colors">
+                <i class="fas fa-ellipsis-v"></i>
+            </button>
+        </div>
+        <h3 class="font-bold text-slate-800 text-lg">อสังหาริมทรัพย์</h3>
+        <div class="flex items-center justify-between mt-2">
+            <p class="text-sm text-slate-400 font-medium">2 รายการ</p>
+            <div
+                class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:bg-blue-50 transition-all">
+                <i class="fas fa-chevron-right text-blue-600"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+}

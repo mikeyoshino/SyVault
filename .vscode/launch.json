@@ -21,13 +21,13 @@
             "internalConsoleOptions": "neverOpen"
         },
         {
-            "name": "🌐 BFF Server (Web)",
+            "name": "🌐 Gateway Server (Web)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build-bff",
-            "program": "${workspaceFolder}/src/DigitalVault.Web/bin/Debug/net8.0/DigitalVault.Web.dll",
+            "preLaunchTask": "build-gateway",
+            "program": "${workspaceFolder}/src/DigitalVault.Gateway/bin/Debug/net8.0/DigitalVault.Gateway.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/src/DigitalVault.Web",
+            "cwd": "${workspaceFolder}/src/DigitalVault.Gateway",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",
@@ -45,17 +45,17 @@
             "internalConsoleOptions": "neverOpen"
         },
         {
-            "name": "🎨 Blazor WebAssembly (Simple)",
+            "name": "🎨 Client (Blazor WebAssembly)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build-blazor",
+            "preLaunchTask": "build-client",
             "program": "dotnet",
             "args": [
                 "run",
                 "--project",
-                "${workspaceFolder}/src/DigitalVault.BlazorApp/DigitalVault.BlazorApp.csproj"
+                "${workspaceFolder}/src/DigitalVault.Client/DigitalVault.Client.csproj"
             ],
-            "cwd": "${workspaceFolder}/src/DigitalVault.BlazorApp",
+            "cwd": "${workspaceFolder}/src/DigitalVault.Client",
             "stopAtEntry": false,
             "console": "integratedTerminal",
             "env": {
@@ -63,32 +63,32 @@
             }
         },
         {
-            "name": "🎨 Blazor WebAssembly (Debug)",
+            "name": "🎨 Client (Debug)",
             "type": "blazorwasm",
             "request": "launch",
-            "preLaunchTask": "build-blazor",
-            "cwd": "${workspaceFolder}/src/DigitalVault.BlazorApp",
+            "preLaunchTask": "build-client",
+            "cwd": "${workspaceFolder}/src/DigitalVault.Client",
             "browser": "chrome",
             "url": "http://localhost:5000/auth",
             "timeout": 120000,
-            "webRoot": "${workspaceFolder}/src/DigitalVault.BlazorApp",
+            "webRoot": "${workspaceFolder}/src/DigitalVault.Client",
             "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
             "trace": true
         },
         {
-            "name": "🔗 Attach to Blazor",
+            "name": "🔗 Attach to Client",
             "type": "blazorwasm",
             "request": "attach",
-            "cwd": "${workspaceFolder}/src/DigitalVault.BlazorApp"
+            "cwd": "${workspaceFolder}/src/DigitalVault.Client"
         }
     ],
     "compounds": [
         {
-            "name": "⚡ Full Stack (BFF + API + Blazor)",
+            "name": "⚡ Full Stack (Gateway + API + Client)",
             "configurations": [
                 "🚀 API Server",
-                "🌐 BFF Server (Web)",
-                "🎨 Blazor WebAssembly (Simple)"
+                "🌐 Gateway Server (Web)",
+                "🎨 Client (Blazor WebAssembly)"
             ],
             "stopAll": true,
             "preLaunchTask": "build-all",
@@ -100,10 +100,10 @@
             "postDebugTask": "kill-all-servers"
         },
         {
-            "name": "🔧 Legacy (API + Blazor Direct)",
+            "name": "🔧 Legacy (API + Client Direct)",
             "configurations": [
                 "🚀 API Server",
-                "🎨 Blazor WebAssembly (Simple)"
+                "🎨 Client (Blazor WebAssembly)"
             ],
             "stopAll": true,
             "presentation": {

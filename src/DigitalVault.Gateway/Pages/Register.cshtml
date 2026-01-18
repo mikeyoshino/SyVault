@@ -1,0 +1,216 @@
+@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "สมัครสมาชิก";
+    Layout = "_Layout";
+}
+
+<div class="max-w-md w-full px-6 py-12">
+    <!-- Logo -->
+    <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white border border-slate-200 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+        </div>
+        <h1 class="text-3xl font-semibold text-slate-800">HeritageVault</h1>
+        <p class="text-slate-500 mt-2 text-sm">สร้างบัญชีใหม่เพื่อเริ่มต้นใช้งาน</p>
+    </div>
+
+    <!-- Card -->
+    <div class="main-card rounded-3xl p-8 md:p-10">
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="error-message">@Model.ErrorMessage</div>
+        }
+
+        <!-- Loading State Overlay -->
+        <div id="loadingOverlay" class="hidden absolute inset-0 bg-white/80 rounded-3xl flex-col items-center justify-center z-10">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-amber-700 mb-3"></div>
+            <p class="text-slate-600 font-medium text-sm animate-pulse">กำลังสร้างกุญแจเข้ารหัส...</p>
+        </div>
+
+        <form method="post" id="registerForm" class="relative">
+            <!-- Hidden Fields for Encryption Data -->
+            <input asp-for="EncryptedMasterKey" type="hidden" id="EncryptedMasterKey" />
+            <input asp-for="KeyDerivationSalt" type="hidden" id="KeyDerivationSalt" />
+            <input asp-for="KeyDerivationIterations" type="hidden" id="KeyDerivationIterations" value="100000" />
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-slate-700 text-sm font-medium mb-2 px-1">อีเมล</label>
+                    <input asp-for="Email" type="email" placeholder="example@email.com"
+                           class="input-field w-full px-4 py-3 rounded-xl text-slate-900" required />
+                    <span asp-validation-for="Email" class="text-red-500 text-xs"></span>
+                </div>
+
+                <div>
+                    <label class="block text-slate-700 text-sm font-medium mb-2 px-1">รหัสผ่าน</label>
+                    <input asp-for="Password" type="password" id="password" placeholder="อย่างน้อย 8 ตัวอักษร"
+                           class="input-field w-full px-4 py-3 rounded-xl text-slate-900" required />
+                    <span asp-validation-for="Password" class="text-red-500 text-xs"></span>
+                </div>
+
+                <div>
+                    <label class="block text-slate-700 text-sm font-medium mb-2 px-1">ยืนยันรหัสผ่าน</label>
+                    <input asp-for="ConfirmPassword" type="password" id="confirmPassword" placeholder="•••"
+                           class="input-field w-full px-4 py-3 rounded-xl text-slate-900" required />
+                    <span asp-validation-for="ConfirmPassword" class="text-red-500 text-xs"></span>
+                </div>
+
+                <div>
+                    <label class="block text-slate-700 text-sm font-medium mb-2 px-1">เบอร์โทรศัพท์ (ไม่บังคับ)</label>
+                    <input asp-for="PhoneNumber" type="tel" placeholder="0812345678"
+                           class="input-field w-full px-4 py-3 rounded-xl text-slate-900" />
+                    <span asp-validation-for="PhoneNumber" class="text-red-500 text-xs"></span>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" id="submitBtn" class="btn-solid w-full py-4 rounded-xl text-white font-semibold transition-all active:scale-[0.99]">
+                        สมัครสมาชิก
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <div class="mt-6 text-center">
+            <p class="text-slate-600 text-sm">
+                มีบัญชีอยู่แล้ว? <a href="/Login" class="text-amber-800 font-medium hover:text-amber-700 transition-colors">เข้าสู่ระบบ</a>
+            </p>
+        </div>
+        
+        <div class="mt-8 pt-6 border-t border-slate-100">
+             <div class="flex items-center gap-3 text-xs text-slate-500 bg-slate-50 p-3 rounded-lg">
+                <svg class="w-5 h-5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clip-rule="evenodd" />
+                </svg>
+                <span>
+                    <strong>Zero-Knowledge Encryption:</strong> รหัสผ่านของคุณจะถูกใช้เพื่อสร้างกุญแจเข้ารหัสบนเครื่องของคุณเท่านั้น เซิร์ฟเวอร์จะไม่ทราบรหัสผ่านหรือกุญแจจริงของคุณ
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        // Zero-Knowledge Encryption Logic
+        const ITERATIONS = 100000;
+        
+        // Helper: Convert ArrayBuffer to Base64
+        function arrayBufferToBase64(buffer) {
+            let binary = '';
+            const bytes = new Uint8Array(buffer);
+            const len = bytes.byteLength;
+            for (let i = 0; i < len; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return window.btoa(binary);
+        }
+
+        async function deriveKeyFromPassword(password, salt) {
+            const encoder = new TextEncoder();
+            const passwordBuffer = encoder.encode(password);
+
+            // Import password
+            const keyMaterial = await window.crypto.subtle.importKey(
+                'raw',
+                passwordBuffer,
+                'PBKDF2',
+                false,
+                ['deriveBits', 'deriveKey']
+            );
+
+            // Derive key
+            return await window.crypto.subtle.deriveKey(
+                {
+                    name: 'PBKDF2',
+                    salt: salt,
+                    iterations: ITERATIONS,
+                    hash: 'SHA-256'
+                },
+                keyMaterial,
+                { name: 'AES-GCM', length: 256 },
+                true,
+                ['encrypt', 'decrypt']
+            );
+        }
+
+        async function encryptMasterKey(masterKey, passwordKey) {
+            // IV for master key encryption does not need to be stored separately 
+            // if we prepend it. Here we generated a random IV.
+            const iv = window.crypto.getRandomValues(new Uint8Array(12));
+
+            const encrypted = await window.crypto.subtle.encrypt(
+                {
+                    name: 'AES-GCM',
+                    iv: iv
+                },
+                passwordKey,
+                masterKey
+            );
+
+            // Combine IV + Encrypted Data
+            const combined = new Uint8Array(iv.length + encrypted.byteLength);
+            combined.set(iv);
+            combined.set(new Uint8Array(encrypted), iv.length);
+
+            return combined;
+        }
+
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Basic client-side validation check
+            if (password !== confirmPassword) {
+                // Let ASP.NET validation handle the UI, but don't waste time encrypting
+                return; 
+            }
+            
+            // Check if hidden fields are already populated (prevent infinite loop)
+            if (document.getElementById('EncryptedMasterKey').value) {
+                return;
+            }
+
+            // Stop submission to perform encryption
+            e.preventDefault();
+            
+            // Show loading
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+            document.getElementById('loadingOverlay').classList.add('flex');
+            
+            try {
+                // 1. Generate Random Master Key (32 bytes / 256 bits)
+                const masterKey = window.crypto.getRandomValues(new Uint8Array(32));
+                
+                // 2. Generate Salt (16 bytes)
+                const salt = window.crypto.getRandomValues(new Uint8Array(16));
+                
+                // 3. Derive Key from Password
+                const passwordKey = await deriveKeyFromPassword(password, salt);
+                
+                // 4. Encrypt Master Key
+                const encryptedMasterKey = await encryptMasterKey(masterKey, passwordKey);
+                
+                // 5. Populate Hidden Fields
+                document.getElementById('EncryptedMasterKey').value = arrayBufferToBase64(encryptedMasterKey);
+                document.getElementById('KeyDerivationSalt').value = arrayBufferToBase64(salt);
+                document.getElementById('KeyDerivationIterations').value = ITERATIONS;
+                
+                // 6. Submit the form
+                this.submit();
+                
+            } catch (err) {
+                console.error("Encryption Error:", err);
+                alert("เกิดข้อผิดพลาดในกระบวนการเข้ารหัสความปลอดภัย: " + err.message);
+                
+                // Hide loading
+                document.getElementById('loadingOverlay').classList.add('hidden');
+                document.getElementById('loadingOverlay').classList.remove('flex');
+            }
+        });
+    </script>
+}

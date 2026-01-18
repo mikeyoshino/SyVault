@@ -1,0 +1,187 @@
+@page "/secure-notes"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@using DigitalVault.Client.Shared.Layouts
+@layout DashboardLayout
+@inject NavigationManager Navigation
+
+<PageTitle>บันทึกข้อมูลสำคัญ - HeritageVault</PageTitle>
+
+<div class="view-content active fade-in">
+    <nav class="flex items-center text-sm text-slate-500 mb-6 space-x-2">
+        <span @onclick="@(() => Navigation.NavigateTo("/"))"
+            class="hover:text-amber-700 cursor-pointer transition-colors">หน้าหลัก</span>
+        <span>/</span>
+        <span class="text-slate-800 font-medium">บันทึกข้อมูลสำคัญ</span>
+    </nav>
+
+    <header class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+        <div>
+            <h2 class="text-3xl font-semibold text-slate-800">บันทึกข้อมูลสำคัญ</h2>
+            <p class="text-slate-500 text-sm">จัดเก็บรหัสผ่าน และข้อมูลลับระดับส่วนบุคคล</p>
+        </div>
+        <button @onclick="OpenAddModal"
+            class="btn-amber px-6 py-3 rounded-xl text-white text-sm font-semibold transition-all flex items-center active:scale-95">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+            </svg>
+            เพิ่มบันทึกใหม่
+        </button>
+    </header>
+
+    <!-- Category Filter -->
+    <div class="flex gap-2 overflow-x-auto pb-4 mb-4 scrollbar-hide">
+        <button
+            class="px-4 py-2 bg-amber-700 text-white text-xs font-semibold rounded-lg whitespace-nowrap">ทั้งหมด</button>
+        <button
+            class="px-4 py-2 bg-white border border-slate-200 text-slate-600 text-xs font-semibold rounded-lg whitespace-nowrap hover:bg-slate-50 transition-colors">รหัส
+            PIN / รหัสผ่าน</button>
+        <button
+            class="px-4 py-2 bg-white border border-slate-200 text-slate-600 text-xs font-semibold rounded-lg whitespace-nowrap hover:bg-slate-50 transition-colors">การเงิน
+            / ธนาคาร</button>
+        <button
+            class="px-4 py-2 bg-white border border-slate-200 text-slate-600 text-xs font-semibold rounded-lg whitespace-nowrap hover:bg-slate-50 transition-colors">ตัวตน
+            / Identity</button>
+        <button
+            class="px-4 py-2 bg-white border border-slate-200 text-slate-600 text-xs font-semibold rounded-lg whitespace-nowrap hover:bg-slate-50 transition-colors">สุขภาพ</button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Example Note Item 1 -->
+        <div class="flat-card p-6 rounded-3xl relative overflow-hidden group">
+            <div class="flex justify-between items-start mb-4">
+                <div class="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z">
+                        </path>
+                    </svg>
+                </div>
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">การเงิน</span>
+            </div>
+            <h3 class="font-bold text-slate-800 mb-1">บัญชีเงินฝากกสิกรไทย</h3>
+            <div class="mt-4 p-3 bg-slate-50 rounded-xl flex items-center justify-between">
+                <span
+                    class="text-sm font-mono text-slate-600 @(IsVisible("note-1") ? "mask-off" : "mask-text")">7012345678</span>
+                <button @onclick="@(() => ToggleMask("note-1"))" class="text-slate-400 hover:text-amber-700">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        @if (IsVisible("note-1"))
+                        {
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21">
+                            </path>
+                        }
+                        else
+                        {
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                            </path>
+                        }
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Example Note Item 2 -->
+        <div class="flat-card p-6 rounded-3xl relative overflow-hidden group">
+            <div class="flex justify-between items-start mb-4">
+                <div class="p-2 bg-amber-50 text-amber-700 rounded-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z">
+                        </path>
+                    </svg>
+                </div>
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">รหัส PIN</span>
+            </div>
+            <h3 class="font-bold text-slate-800 mb-1">PIN ตู้เซฟห้องนอน</h3>
+            <div class="mt-4 p-3 bg-slate-50 rounded-xl flex items-center justify-between">
+                <span
+                    class="text-sm font-mono text-slate-600 @(IsVisible("note-2") ? "mask-off" : "mask-text")">889900</span>
+                <button @onclick="@(() => ToggleMask("note-2"))" class="text-slate-400 hover:text-amber-700">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        @if (IsVisible("note-2"))
+                        {
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21">
+                            </path>
+                        }
+                        else
+                        {
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                            </path>
+                        }
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Example Note Item 3 -->
+        <div class="flat-card p-6 rounded-3xl relative overflow-hidden group">
+            <div class="flex justify-between items-start mb-4">
+                <div class="p-2 bg-purple-50 text-purple-600 rounded-lg">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.206">
+                        </path>
+                    </svg>
+                </div>
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">มรดกดิจิทัล</span>
+            </div>
+            <h3 class="font-bold text-slate-800 mb-1">อีเมลหลัก (กู้คืนข้อมูล)</h3>
+            <div class="mt-4 p-3 bg-slate-50 rounded-xl flex items-center justify-between">
+                <span
+                    class="text-sm font-mono text-slate-600 @(IsVisible("note-3") ? "mask-off" : "mask-text")">primary@legacy.com</span>
+                <button @onclick="@(() => ToggleMask("note-3"))" class="text-slate-400 hover:text-amber-700">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        @if (IsVisible("note-3"))
+                        {
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21">
+                            </path>
+                        }
+                        else
+                        {
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                            </path>
+                        }
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter] public DashboardLayout? Layout { get; set; }
+    private Dictionary<string, bool> _visibleState = new();
+
+    private void OpenAddModal()
+    {
+        Layout?.OpenAddModal();
+    }
+
+    private bool IsVisible(string id)
+    {
+        return _visibleState.ContainsKey(id) && _visibleState[id];
+    }
+
+    private void ToggleMask(string id)
+    {
+        if (_visibleState.ContainsKey(id))
+        {
+            _visibleState[id] = !_visibleState[id];
+        }
+        else
+        {
+            _visibleState[id] = true;
+        }
+    }
+}

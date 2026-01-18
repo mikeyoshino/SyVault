@@ -1,0 +1,340 @@
+@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+
+<div class="flex min-h-screen bg-[#F8FAFC] font-['Anuphan'] text-slate-900">
+    <!-- Mobile Overlay -->
+    @if (_showDrawer)
+    {
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden" @onclick="CloseDrawer"></div>
+    }
+
+    <!-- Sidebar / Drawer -->
+    <aside class="@GetSidebarClasses()">
+        <div
+            class="@(_sidebarCollapsed ? "flex flex-col items-center mb-10 px-2" : "flex items-center justify-between mb-10 px-2")">
+            <div class="@(_sidebarCollapsed ? "flex flex-col items-center space-y-2" : "flex items-center space-x-3") cursor-pointer"
+                @onclick="@(() => Navigation.NavigateTo("/"))">
+                <div class="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-200">
+                    <i class="fas fa-shield-halved text-white"></i>
+                </div>
+                @if (!_sidebarCollapsed)
+                {
+                    <span class="text-2xl font-black text-slate-800 tracking-tight">Trustworthy</span>
+                }
+            </div>
+            <!-- Close button for mobile -->
+            @if (!_sidebarCollapsed)
+            {
+                <button class="lg:hidden text-slate-400 hover:text-slate-600" @onclick="CloseDrawer">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            }
+        </div>
+
+        <nav class="flex-1 space-y-2">
+            <div class="space-y-1">
+                <NavLink href="/dashboard" class="@GetMenuItemClass("Dashboard", "/dashboard")" Match="NavLinkMatch.All"
+                    @onclick="CloseDrawer">
+                    <i class="fas fa-th"></i>
+                    @if (!_sidebarCollapsed)
+                    {
+                        <span class="text-sm font-medium">Dashboard</span>
+                    }
+                </NavLink>
+                <div class="@GetMenuItemClass("Inbox", "")" @onclick="@(() => HandleMenuClick("Inbox"))">
+                    <i class="fas fa-inbox"></i>
+                    @if (!_sidebarCollapsed)
+                    {
+                        <span class="text-sm font-medium">Inbox</span>
+                    }
+                </div>
+                <NavLink href="/reminders" class="@GetMenuItemClass("Reminders", "/reminders")" @onclick="CloseDrawer">
+                    <i class="fas fa-calendar-check"></i>
+                    @if (!_sidebarCollapsed)
+                    {
+                        <span class="text-sm font-medium">Reminders</span>
+                    }
+                </NavLink>
+                <NavLink href="/familyid" class="@GetMenuItemClass("Family IDs", "/familyid")" @onclick="CloseDrawer">
+                    <i class="fas fa-id-card"></i>
+                    @if (!_sidebarCollapsed)
+                    {
+                        <span class="text-sm font-medium">Family IDs</span>
+                    }
+                </NavLink>
+                <NavLink href="/finance" class="@GetMenuItemClass("Finance", "/finance")" @onclick="CloseDrawer">
+                    <i class="fas fa-dollar-sign"></i>
+                    @if (!_sidebarCollapsed)
+                    {
+                        <span class="text-sm font-medium">Finance</span>
+                    }
+                </NavLink>
+                <NavLink href="/land-records" class="@GetMenuItemClass("Property", "/land-records")"
+                    @onclick="CloseDrawer">
+                    <i class="fas fa-home"></i>
+                    @if (!_sidebarCollapsed)
+                    {
+                        <span class="text-sm font-medium">Property</span>
+                    }
+                </NavLink>
+                <NavLink href="/secure-notes" class="@GetMenuItemClass("Passwords", "/secure-notes")"
+                    @onclick="CloseDrawer">
+                    <i class="fas fa-key"></i>
+                    @if (!_sidebarCollapsed)
+                    {
+                        <span class="text-sm font-medium">Passwords</span>
+                    }
+                </NavLink>
+                <NavLink href="/insurance" class="@GetMenuItemClass("Insurance", "/insurance")" @onclick="CloseDrawer">
+                    <i class="fas fa-umbrella"></i>
+                    @if (!_sidebarCollapsed)
+                    {
+                        <span class="text-sm font-medium">Insurance</span>
+                    }
+                </NavLink>
+                <NavLink href="/taxes" class="@GetMenuItemClass("Taxes", "/taxes")" @onclick="CloseDrawer">
+                    <i class="fas fa-percent"></i>
+                    @if (!_sidebarCollapsed)
+                    {
+                        <span class="text-sm font-medium">Taxes</span>
+                    }
+                </NavLink>
+                <NavLink href="/legal" class="@GetMenuItemClass("Legal", "/legal")" @onclick="CloseDrawer">
+                    <i class="fas fa-gavel"></i>
+                    @if (!_sidebarCollapsed)
+                    {
+                        <span class="text-sm font-medium">Legal</span>
+                    }
+                </NavLink>
+                <NavLink href="/business" class="@GetMenuItemClass("Business", "/business")" @onclick="CloseDrawer">
+                    <i class="fas fa-briefcase"></i>
+                    @if (!_sidebarCollapsed)
+                    {
+                        <span class="text-sm font-medium">Business</span>
+                    }
+                </NavLink>
+                <NavLink href="/resources" class="@GetMenuItemClass("Family Resources", "/resources")"
+                    @onclick="CloseDrawer">
+                    <i class="fas fa-life-ring"></i>
+                    @if (!_sidebarCollapsed)
+                    {
+                        <span class="text-sm font-medium">Family Resources</span>
+                    }
+                </NavLink>
+                <NavLink href="/beneficiaries" class="@GetMenuItemClass("Contacts", "/beneficiaries")"
+                    @onclick="CloseDrawer">
+                    <i class="fas fa-address-book"></i>
+                    @if (!_sidebarCollapsed)
+                    {
+                        <span class="text-sm font-medium">Contacts</span>
+                    }
+                </NavLink>
+            </div>
+        </nav>
+
+        @if (!_sidebarCollapsed)
+        {
+            <div class="mt-auto pt-6 border-t border-slate-100">
+                <div class="flex items-center space-x-3 px-3 py-4 bg-slate-50 rounded-2xl">
+                    <div
+                        class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-bold">
+                        SJ
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-slate-800">สมชาย ใจดี</p>
+                        <p class="text-[11px] text-slate-500">Family Plan</p>
+                    </div>
+                </div>
+                <button @onclick="Logout"
+                    class="w-full mt-4 flex items-center justify-center space-x-2 px-4 py-3 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="text-sm font-medium">ออกจากระบบ</span>
+                </button>
+            </div>
+        }
+    </aside>
+
+    <!-- Content Panel (appears when sidebar is collapsed) -->
+    @if (_sidebarCollapsed && _activePanelContent != null)
+    {
+        <div
+            class="content-panel fixed left-20 top-0 h-screen w-96 bg-white border-r border-slate-200 shadow-xl z-20 overflow-y-auto">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <h2 class="text-xl font-bold text-slate-800">@_activePanelContent</h2>
+                        <button
+                            class="w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500">
+                            <i class="fas fa-info-circle text-xs"></i>
+                        </button>
+                    </div>
+                    <button @onclick="ClosePanel" class="text-slate-400 hover:text-slate-600 transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                @if (_activePanelContent == "Inbox")
+                {
+                    <!-- Inbox Content -->
+                    <div class="space-y-6">
+                        <!-- File Drop Zone -->
+                        <div
+                            class="border-2 border-dashed border-slate-300 rounded-2xl p-8 text-center hover:border-blue-400 hover:bg-blue-50/50 transition-all cursor-pointer">
+                            <i class="fas fa-cloud-upload-alt text-4xl text-slate-400 mb-4"></i>
+                            <p class="text-slate-600 font-medium mb-2">Drop files here or</p>
+                            <button class="text-blue-600 font-semibold hover:underline">Browse files</button>
+                        </div>
+
+                        <!-- Instructions -->
+                        <div class="space-y-4">
+                            <div class="flex gap-3">
+                                <div
+                                    class="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-sm">
+                                    1</div>
+                                <div>
+                                    <h3 class="font-bold text-slate-800 mb-1">Add your files to Inbox</h3>
+                                    <p class="text-sm text-slate-600">Drop or browse files above or add files with <span
+                                            class="text-blue-600">extension</span>, <span class="text-blue-600">Android
+                                            app</span>, <span class="text-blue-600">iOS app</span>, or <span
+                                            class="text-blue-600">email</span>.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <div
+                                    class="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-sm">
+                                    2</div>
+                                <div>
+                                    <h3 class="font-bold text-slate-800 mb-1">Automatically find insights</h3>
+                                    <p class="text-sm text-slate-600">Extract key file details, summaries, and organization
+                                        suggestions.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <div
+                                    class="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold text-sm">
+                                    3</div>
+                                <div>
+                                    <h3 class="font-bold text-slate-800 mb-1">Effortlessly organize</h3>
+                                    <p class="text-sm text-slate-600">Utilize Autopilot suggestions and drag files to their
+                                        final destination.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <!-- Default Content for other panels -->
+                    <div class="text-center py-12">
+                        <i class="fas fa-folder-open text-6xl text-slate-300 mb-4"></i>
+                        <p class="text-slate-500">Content for @_activePanelContent</p>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Main Content -->
+    <main class="flex-1 h-screen overflow-y-auto transition-all duration-300" style="@GetMainContentStyle()">
+        <header
+            class="h-20 bg-white/80 backdrop-blur-xl border-b border-slate-100 px-4 sm:px-8 flex items-center justify-between sticky top-0 z-30">
+            <!-- Mobile Menu Button -->
+            <button class="lg:hidden text-slate-600 hover:text-blue-600 mr-4" @onclick="ToggleDrawer">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+
+            <div class="flex-1 max-w-2xl">
+                <div class="relative">
+                    <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <input type="text" placeholder="ค้นหาข้อมูลครอบครัวของคุณ..."
+                        class="w-full bg-slate-100/50 border-none rounded-2xl py-2.5 pl-12 pr-4 text-sm focus:bg-white focus:ring-4 focus:ring-blue-50/50 outline-none transition-all" />
+                </div>
+            </div>
+            <button @onclick="OpenAddModal"
+                class="ml-4 bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-5 py-2.5 rounded-xl text-sm font-bold flex items-center shadow-lg shadow-blue-200 transition-all">
+                <i class="fas fa-plus sm:mr-2"></i>
+                <span class="hidden sm:inline">เพิ่มรายการ</span>
+            </button>
+        </header>
+
+        <div class="p-4 sm:p-8 max-w-7xl mx-auto">
+            @Body
+        </div>
+    </main>
+
+    <!-- Modal for adding items -->
+    <div
+        class="modal-overlay fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm @(_showModal ? "" : "hidden")">
+        <div class="bg-white w-full max-w-lg rounded-3xl border border-slate-200 p-8 fade-in shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-slate-800">เพิ่มรายการใหม่</h3>
+                <button @onclick="CloseModal" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <form class="space-y-4" @onclick:stopPropagation="true" @onsubmit="SaveItem">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">ชื่อรายการ</label>
+                    <input type="text" placeholder="ระบุชื่อรายการ"
+                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-600 transition-colors">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">หมวดหมู่</label>
+                    <select
+                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-600 transition-colors">
+                        <option>ครอบครัว</option>
+                        <option>การเงิน</option>
+                        <option>สุขภาพ</option>
+                        <option>อสังหาริมทรัพย์</option>
+                    </select>
+                </div>
+                <div class="pt-4 flex gap-3">
+                    <button type="button" @onclick="CloseModal"
+                        class="flex-1 py-3 border border-slate-200 text-slate-600 font-semibold rounded-xl hover:bg-slate-50 transition-colors">
+                        ยกเลิก
+                    </button>
+                    <button type="submit"
+                        class="flex-1 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-100 active:scale-95 transition-all">
+                        บันทึก
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string GetSidebarClasses()
+    {
+        var baseClasses = "bg-white border-r border-slate-100 flex flex-col p-6 transition-all duration-300 ease-in-out";
+        var widthClass = _sidebarCollapsed ? "w-20" : "w-72";
+        var desktopClasses = "hidden lg:flex";
+        var mobileClasses = _showDrawer
+        ? "fixed inset-y-0 left-0 z-50 translate-x-0"
+        : "fixed inset-y-0 left-0 z-50 -translate-x-full";
+
+        return $"{baseClasses} {widthClass} {desktopClasses} lg:translate-x-0 {mobileClasses}";
+    }
+
+    private string GetMenuItemClass(string menuItem, string route)
+    {
+        var baseClass = "sidebar-item";
+
+        // For navigation items, don't add active class based on panel
+        // NavLink will handle the active state
+        var justifyClass = _sidebarCollapsed ? " justify-center" : "";
+        return $"{baseClass}{justifyClass}";
+    }
+
+    private string GetMainContentStyle()
+    {
+        if (_sidebarCollapsed && _activePanelContent != null)
+        {
+            // Sidebar (80px) + Panel (384px) = 464px total
+            return "margin-left: 464px;";
+        }
+        return "";
+    }
+}

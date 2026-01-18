@@ -1,0 +1,60 @@
+@page "/land-records"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@using DigitalVault.Client.Shared.Layouts
+@layout DashboardLayout
+@inject NavigationManager Navigation
+
+<PageTitle>โฉนดและที่ดิน - HeritageVault</PageTitle>
+
+<div class="view-content active fade-in">
+    <nav class="flex items-center text-sm text-slate-500 mb-6 space-x-2">
+        <span @onclick="@(() => Navigation.NavigateTo("/"))"
+            class="hover:text-amber-700 cursor-pointer transition-colors">หน้าหลัก</span>
+        <span>/</span>
+        <span class="text-slate-800 font-medium">โฉนดและที่ดิน</span>
+    </nav>
+
+    <header class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+        <div>
+            <h2 class="text-3xl font-semibold text-slate-800">โฉนดและที่ดิน</h2>
+            <p class="text-slate-500 text-sm">คลังจัดเก็บข้อมูลส่วนตัว</p>
+        </div>
+        <button @onclick="OpenAddModal"
+            class="btn-amber px-6 py-3 rounded-xl text-white text-sm font-semibold flex items-center transition-all active:scale-95">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+            </svg>
+            เพิ่มโฉนดใหม่
+        </button>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Example Card -->
+        <div class="flat-card rounded-3xl overflow-hidden flex flex-col md:flex-row group transition-colors">
+            <div class="md:w-40 bg-slate-50 flex items-center justify-center p-4">
+                <svg class="w-10 h-10 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                    </path>
+                </svg>
+            </div>
+            <div class="flex-1 p-6">
+                <h3 class="font-bold text-slate-800">บ้านสวนนนทบุรี</h3>
+                <p class="text-sm text-slate-500 mb-4 font-light">เลขที่โฉนด: 123456</p>
+                <button class="text-sm font-semibold text-amber-800 flex items-center">ดูข้อมูลชุดเต็ม <svg
+                        class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path>
+                    </svg></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter] public DashboardLayout? Layout { get; set; }
+
+    private void OpenAddModal()
+    {
+        Layout?.OpenAddModal();
+    }
+}

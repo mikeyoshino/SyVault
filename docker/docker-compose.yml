@@ -16,7 +16,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -32,7 +32,7 @@ services:
       - "6379:6379"
     command: redis-server --requirepass Dev@Redis123
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
       timeout: 3s
       retries: 5
@@ -47,9 +47,9 @@ services:
     platform: linux/arm64
     container_name: digitalvault-azurite
     ports:
-      - "10000:10000"  # Blob service
-      - "10001:10001"  # Queue service
-      - "10002:10002"  # Table service
+      - "10000:10000" # Blob service
+      - "10001:10001" # Queue service
+      - "10002:10002" # Table service
     volumes:
       - azurite_data:/data
     command: azurite-blob --blobHost 0.0.0.0 --loose
@@ -78,8 +78,8 @@ services:
     platform: linux/arm64
     container_name: digitalvault-mailpit
     ports:
-      - "1025:1025"  # SMTP server
-      - "8025:8025"  # Web UI
+      - "1025:1025" # SMTP server
+      - "8025:8025" # Web UI
     networks:
       - digitalvault-network
 
@@ -89,7 +89,7 @@ services:
     platform: linux/arm64
     container_name: digitalvault-adminer
     ports:
-      - "8082:8080"  # Changed to 8082 to avoid port conflict
+      - "8082:8080" # Changed to 8082 to avoid port conflict
     environment:
       ADMINER_DEFAULT_SERVER: postgres
     depends_on:
@@ -108,6 +108,30 @@ services:
       - redis_insight_data:/data
     depends_on:
       - redis
+
+  # MinIO (S3 Compatible Storage)
+  minio:
+    image: minio/minio:latest
+    container_name: digitalvault-minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - digitalvault-network
+
+  # MinIO Client (for creating buckets)
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c " /usr/bin/mc config host add myminio http://minio:9000 minioadmin minioadmin; /usr/bin/mc mb myminio/digital-vault-documents-local; /usr/bin/mc policy set public myminio/digital-vault-documents-local; exit 0; "
     networks:
       - digitalvault-network
 
@@ -119,6 +143,8 @@ volumes:
   azurite_data:
     driver: local
   redis_insight_data:
+    driver: local
+  minio_data:
     driver: local
   # sqlserver_data:
   #   driver: local

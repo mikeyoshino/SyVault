@@ -19,12 +19,12 @@
             }
         },
         {
-            "label": "build-bff",
+            "label": "build-gateway",
             "command": "dotnet",
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/src/DigitalVault.Web/DigitalVault.Web.csproj",
+                "${workspaceFolder}/src/DigitalVault.Gateway/DigitalVault.Gateway.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -36,12 +36,12 @@
             }
         },
         {
-            "label": "build-blazor",
+            "label": "build-client",
             "command": "dotnet",
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/src/DigitalVault.BlazorApp/DigitalVault.BlazorApp.csproj",
+                "${workspaceFolder}/src/DigitalVault.Client/DigitalVault.Client.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -56,8 +56,8 @@
             "label": "build-all",
             "dependsOn": [
                 "build-api",
-                "build-bff",
-                "build-blazor"
+                "build-gateway",
+                "build-client"
             ],
             "group": {
                 "kind": "build",
@@ -83,14 +83,14 @@
             }
         },
         {
-            "label": "watch-bff",
+            "label": "watch-gateway",
             "command": "dotnet",
             "type": "process",
             "args": [
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/src/DigitalVault.Web/DigitalVault.Web.csproj"
+                "${workspaceFolder}/src/DigitalVault.Gateway/DigitalVault.Gateway.csproj"
             ],
             "problemMatcher": "$msCompile",
             "group": "build",
@@ -100,14 +100,14 @@
             }
         },
         {
-            "label": "watch-blazor",
+            "label": "watch-client",
             "command": "dotnet",
             "type": "process",
             "args": [
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/src/DigitalVault.BlazorApp/DigitalVault.BlazorApp.csproj"
+                "${workspaceFolder}/src/DigitalVault.Client/DigitalVault.Client.csproj"
             ],
             "problemMatcher": "$msCompile",
             "group": "build",
@@ -128,23 +128,23 @@
             "group": "build"
         },
         {
-            "label": "clean-bff",
+            "label": "clean-gateway",
             "command": "dotnet",
             "type": "process",
             "args": [
                 "clean",
-                "${workspaceFolder}/src/DigitalVault.Web/DigitalVault.Web.csproj"
+                "${workspaceFolder}/src/DigitalVault.Gateway/DigitalVault.Gateway.csproj"
             ],
             "problemMatcher": "$msCompile",
             "group": "build"
         },
         {
-            "label": "clean-blazor",
+            "label": "clean-client",
             "command": "dotnet",
             "type": "process",
             "args": [
                 "clean",
-                "${workspaceFolder}/src/DigitalVault.BlazorApp/DigitalVault.BlazorApp.csproj"
+                "${workspaceFolder}/src/DigitalVault.Client/DigitalVault.Client.csproj"
             ],
             "problemMatcher": "$msCompile",
             "group": "build"
@@ -153,8 +153,8 @@
             "label": "clean-all",
             "dependsOn": [
                 "clean-api",
-                "clean-bff",
-                "clean-blazor"
+                "clean-gateway",
+                "clean-client"
             ],
             "group": "build",
             "problemMatcher": []
@@ -196,7 +196,7 @@
         {
             "label": "cleanup-before-launch",
             "type": "shell",
-            "command": "pkill -f 'DigitalVault\\.(API|Web|BlazorApp)\\.dll' || true",
+            "command": "pkill -f 'DigitalVault\\.(API|Gateway|Client)\\.dll' || true",
             "presentation": {
                 "reveal": "silent",
                 "panel": "shared"

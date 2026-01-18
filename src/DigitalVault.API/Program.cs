@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Amazon.S3;
+using DigitalVault.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +59,12 @@ builder.Services.AddHangfireServer(options =>
 {
     options.WorkerCount = 1; // Single worker for development
 });
+
+// Configure AWS S3
+var awsOptions = builder.Configuration.GetAWSOptions("AWS");
+builder.Services.AddDefaultAWSOptions(awsOptions);
+builder.Services.AddAWSService<IAmazonS3>();
+builder.Services.AddScoped<IStorageService, S3Service>();
 
 // Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -191,7 +199,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // Disable HTTPS redirection in Dev to allow YARP HTTP forwarding
 app.UseCors("AllowBlazorClient");
 
 // Use Hangfire Dashboard (only in development for security)

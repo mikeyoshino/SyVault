@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalVault.Infrastructure
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalVault.API", "src\DigitalVault.API\DigitalVault.API.csproj", "{AF9C3B55-181E-465B-8F70-6F2EE1D53941}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalVault.BlazorApp", "src\DigitalVault.BlazorApp\DigitalVault.BlazorApp.csproj", "{FA4E4458-9E1F-4DF1-8CE2-0A0992ED0EBD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalVault.Client", "src\DigitalVault.Client\DigitalVault.Client.csproj", "{FA4E4458-9E1F-4DF1-8CE2-0A0992ED0EBD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalVault.Shared", "src\DigitalVault.Shared\DigitalVault.Shared.csproj", "{A69EAB56-1C3B-45AE-BC5A-9666D9DA609C}"
 EndProject
@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalVault.UnitTests", "t
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalVault.IntegrationTests", "tests\DigitalVault.IntegrationTests\DigitalVault.IntegrationTests.csproj", "{06563578-EE3C-4699-A00A-F58E65ECE83B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalVault.Web", "src\DigitalVault.Web\DigitalVault.Web.csproj", "{AD50DBDC-A96F-43EA-8BA9-6681F85BA8B8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitalVault.Gateway", "src\DigitalVault.Gateway\DigitalVault.Gateway.csproj", "{AD50DBDC-A96F-43EA-8BA9-6681F85BA8B8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

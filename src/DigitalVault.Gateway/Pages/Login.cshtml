@@ -1,0 +1,251 @@
+@page
+@model LoginModel
+@{
+    ViewData["Title"] = "เข้าสู่ระบบ";
+    Layout = "_Layout";
+}
+
+<div class="max-w-md w-full px-6 py-12">
+    <!-- Logo -->
+    <div class="text-center mb-8">
+        <div
+            class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white border border-slate-200 mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-amber-700" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            </svg>
+        </div>
+        <h1 class="text-3xl font-semibold text-slate-800">HeritageVault</h1>
+        <p class="text-slate-500 mt-2 text-sm">พื้นที่ปลอดภัยสำหรับส่งต่อมรดกทางดิจิทัลของคุณ</p>
+    </div>
+
+    <!-- Card -->
+    <div class="main-card rounded-3xl p-8 md:p-10">
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="error-message">@Model.ErrorMessage</div>
+        }
+
+        <form id="loginForm">
+            <input type="hidden" name="__RequestVerificationToken" value="@Html.AntiForgeryToken()" />
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-slate-700 text-sm font-medium mb-2 px-1">อีเมลผู้ใช้งาน</label>
+                    <input asp-for="Email" id="email" type="email" placeholder="example@email.com"
+                        class="input-field w-full px-4 py-3 rounded-xl text-slate-900" required />
+                    <span asp-validation-for="Email" class="text-red-500 text-xs"></span>
+                </div>
+
+                <div>
+                    <label class="block text-slate-700 text-sm font-medium mb-2 px-1">รหัสผ่าน</label>
+                    <input asp-for="Password" id="password" type="password" placeholder="••••••••"
+                        class="input-field w-full px-4 py-3 rounded-xl text-slate-900" required />
+                    <span asp-validation-for="Password" class="text-red-500 text-xs"></span>
+                </div>
+
+                <div class="flex items-center justify-between text-xs px-1">
+                    <label class="flex items-center text-slate-600 cursor-pointer">
+                        <input asp-for="RememberMe" id="rememberMe" type="checkbox"
+                            class="mr-2 rounded border-slate-300" />
+                        จดจำฉันในเครื่องนี้
+                    </label>
+                    <a href="/ForgotPassword" class="text-amber-800 font-medium hover:text-amber-700">ลืมรหัสผ่าน?</a>
+                </div>
+
+                <div id="loadingState" class="hidden text-center text-amber-700 text-sm font-medium animate-pulse">
+                    กำลังตรวจสอบข้อมูลและถอดรหัสกุญแจ...
+                </div>
+                <div id="formError" class="hidden text-center text-red-500 text-sm font-medium"></div>
+
+                <button type="button" onclick="handleLogin()" id="submitBtn"
+                    class="btn-solid w-full py-4 rounded-xl text-white font-semibold transition-all active:scale-[0.99]">
+                    เข้าสู่ระบบอย่างปลอดภัย
+                </button>
+            </div>
+        </form>
+
+        <script>
+            async function handleLogin() {
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const rememberMe = document.getElementById('rememberMe').checked;
+                const submitBtn = document.getElementById('submitBtn');
+                const loadingState = document.getElementById('loadingState');
+                const formError = document.getElementById('formError');
+                const tokenInput = document.querySelector('input[name="__RequestVerificationToken"]');
+                const token = tokenInput ? tokenInput.value : '';
+
+                if (!email || !password) {
+                    formError.innerText = "กรุณากรอกอีเมลและรหัสผ่าน";
+                    formError.classList.remove('hidden');
+                    return;
+                }
+
+                // Reset state
+                formError.classList.add('hidden');
+                formError.innerText = '';
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                loadingState.classList.remove('hidden');
+
+                try {
+                    // 1. Post to Server (BFF)
+                    const formData = new FormData();
+                    formData.append('Email', email);
+                    formData.append('Password', password);
+                    formData.append('RememberMe', rememberMe);
+                    formData.append('__RequestVerificationToken', token);
+
+                    // Send Accept header to request JSON
+                    const response = await fetch('/Login?ajax=true', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    // Check if response is JSON (HTML error page might be returned)
+                    const contentType = response.headers.get("content-type");
+                    if (!contentType || !contentType.includes("application/json")) {
+                        throw new Error("Server returned non-JSON response. Please check server logs.");
+                    }
+
+                    const result = await response.json();
+
+                    if (!result.success) {
+                        throw new Error(result.message || 'การเข้าสู่ระบบล้มเหลว');
+                    }
+
+                    // 2. Login Success (Cookie Set). Now Decrypt Master Key.
+                    const user = result.data;
+
+                    if (!user.encryptedMasterKey || !user.keyDerivationSalt) {
+                        console.warn("No encryption data found for user.");
+                        window.location.href = result.redirectUrl || '/';
+                        return;
+                    }
+
+                    // 3. Client-Side Decryption logic (Zero-Knowledge)
+                    try {
+                        console.log("Starting Key Decryption...");
+                        const masterKey = await decryptMasterKey(user.encryptedMasterKey, password, user.keyDerivationSalt, user.keyDerivationIterations);
+                        console.log("Key Decryption Success.");
+
+                        // 4. Store Master Key
+                        // Serialize to JSON because SecureStorageService.GetSessionItemAsync expects JSON
+                        const jsonKey = JSON.stringify(masterKey);
+
+                        if (rememberMe) {
+                            // Persistent Storage (LocalStorage)
+                            localStorage.setItem('masterKey', jsonKey);
+
+                            // Clear session storage to avoid duplicates/confusion
+                            sessionStorage.removeItem('masterKey');
+                        } else {
+                            // Temporary Session (SessionStorage)
+                            sessionStorage.setItem('masterKey', jsonKey);
+
+                            // Clear local storage to ensure we don't accidentally persist
+                            localStorage.removeItem('masterKey');
+                        }
+
+                        // 5. Redirect
+                        window.location.href = result.redirectUrl || '/';
+
+                    } catch (cryptoError) {
+                        console.error("Decryption failed:", cryptoError);
+                        throw new Error("รหัสผ่านถูกต้อง แต่ไม่สามารถถอดรหัสข้อมูลได้ (Decryption Failed)");
+                    }
+
+                } catch (error) {
+                    console.error(error);
+                    formError.innerText = error.message;
+                    formError.classList.remove('hidden');
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    loadingState.classList.add('hidden');
+                }
+            }
+
+            // --- Crypto Helpers (Matches Blazor CryptoService) ---
+
+            async function decryptMasterKey(encryptedMasterKeyBase64, password, saltBase64, iterations) {
+                const enc = new TextEncoder();
+
+                // Import Password
+                const passwordKey = await window.crypto.subtle.importKey(
+                    "raw",
+                    enc.encode(password),
+                    { name: "PBKDF2" },
+                    false,
+                    ["deriveKey"]
+                );
+
+                // Derive Key (PBKDF2)
+                const salt = Uint8Array.from(atob(saltBase64), c => c.charCodeAt(0));
+                const derivedKey = await window.crypto.subtle.deriveKey(
+                    {
+                        name: "PBKDF2",
+                        salt: salt,
+                        iterations: iterations,
+                        hash: "SHA-256"
+                    },
+                    passwordKey,
+                    { name: "AES-GCM", length: 256 },
+                    false,
+                    ["decrypt"]
+                );
+
+                // Decrypt (AES-GCM)
+                // encryptedMasterKeyBase64 format: IV (12 bytes) + Ciphertext + Tag (16 bytes)
+                const encryptedBytes = Uint8Array.from(atob(encryptedMasterKeyBase64), c => c.charCodeAt(0));
+
+                // Extract IV (First 12 bytes)
+                const iv = encryptedBytes.slice(0, 12);
+                const ciphertext = encryptedBytes.slice(12);
+
+                const decryptedBuffer = await window.crypto.subtle.decrypt(
+                    {
+                        name: "AES-GCM",
+                        iv: iv
+                    },
+                    derivedKey,
+                    ciphertext
+                );
+
+                // Return as Base64 string
+                const decryptedBytes = new Uint8Array(decryptedBuffer);
+                return btoa(String.fromCharCode.apply(null, decryptedBytes));
+            }
+        </script>
+
+        <div class="mt-6 text-center">
+            <p class="text-slate-600 text-sm">
+                ยังไม่มีบัญชี? <a href="/Register"
+                    class="text-amber-800 font-medium hover:text-amber-700 transition-colors">สมัครสมาชิก</a>
+            </p>
+        </div>
+
+        <!-- Security Indicators -->
+        <div class="flex justify-center gap-4 mt-8 pt-6 border-t border-slate-100">
+            <div class="flex items-center gap-2 text-xs text-slate-500">
+                <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                        d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd" />
+                </svg>
+                <span>AES-256 Encrypted</span>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-slate-500">
+                <svg class="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                        d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z"
+                        clip-rule="evenodd" />
+                </svg>
+                <span>Zero Knowledge</span>
+            </div>
+        </div>
+    </div>
+</div>

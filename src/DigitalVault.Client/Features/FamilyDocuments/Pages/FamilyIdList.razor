@@ -1,0 +1,164 @@
+@page "/familyid"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@using DigitalVault.Client.Shared.Layouts
+@layout DashboardLayout
+@inject NavigationManager Navigation
+
+<PageTitle>Family IDs - Trustworthy</PageTitle>
+
+<div class="space-y-6 page-transition">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+            <h1 class="text-3xl font-bold text-slate-800">Family IDs</h1>
+            <button
+                class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center hover:bg-blue-700 transition-all shadow-lg shadow-blue-200">
+                <i class="fas fa-plus"></i>
+            </button>
+            <span class="text-sm text-blue-600 font-medium">10 recommended items</span>
+        </div>
+    </div>
+
+    <!-- People Section -->
+    <div>
+        <h2 class="text-sm font-semibold text-slate-600 mb-4">People</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Existing Member Card -->
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 hover:shadow-lg transition-all cursor-pointer group"
+                @onclick="@(() => Navigation.NavigateTo("/familyid/person/1"))">
+                <div class="flex items-center gap-4 mb-4">
+                    <div
+                        class="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                        SY
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800">Supakorn Yoshino</h3>
+                        <p class="text-sm text-slate-500">Owner</p>
+                    </div>
+                </div>
+                <div class="flex items-center text-sm text-blue-600 font-medium">
+                    <i class="fas fa-file-alt mr-2"></i>
+                    <span>8 items</span>
+                </div>
+            </div>
+
+            <!-- Add New Member Card -->
+            <div class="bg-white rounded-2xl p-6 border-2 border-dashed border-slate-300 hover:border-blue-400 hover:bg-blue-50/50 transition-all cursor-pointer group"
+                @onclick="OpenAddMemberModal">
+                <div class="flex flex-col items-center justify-center h-full text-center py-4">
+                    <div
+                        class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mb-3 group-hover:bg-blue-600 group-hover:text-white transition-all">
+                        <i class="fas fa-user-plus text-xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-slate-700 group-hover:text-blue-600">New Family ID</h3>
+                    <p class="text-xs text-slate-500 mt-1">Recommended item</p>
+                    <button class="mt-3 text-sm text-blue-600 font-medium hover:underline">+ Add this item</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pets Section -->
+    <div>
+        <h2 class="text-sm font-semibold text-slate-600 mb-4">Pets</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Pet Card -->
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 hover:shadow-lg transition-all cursor-pointer">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 bg-slate-200 rounded-full flex items-center justify-center text-slate-600">
+                        <i class="fas fa-paw text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800">Yoshino Family Pet</h3>
+                    </div>
+                </div>
+                <div class="flex items-center text-sm text-slate-500">
+                    <i class="fas fa-file-alt mr-2"></i>
+                    <span>2 items</span>
+                    <span class="ml-2 text-amber-600">Pre-populated</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Family Member Modal -->
+@if (_showAddMemberModal)
+{
+    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        @onclick="CloseAddMemberModal">
+        <div class="bg-white w-full max-w-lg rounded-3xl p-8 shadow-2xl" @onclick:stopPropagation="true">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-slate-800">New Family ID</h2>
+                <button @onclick="CloseAddMemberModal" class="text-slate-400 hover:text-slate-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Avatar Upload -->
+            <div class="flex flex-col items-center mb-6">
+                <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mb-3">
+                    <i class="fas fa-user text-4xl text-blue-400"></i>
+                </div>
+                <button class="text-sm text-blue-600 font-medium hover:underline">Add image</button>
+            </div>
+
+            <!-- Form -->
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">First name</label>
+                        <input type="text" placeholder="First name"
+                            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-600 transition-colors">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Last name</label>
+                        <input type="text" placeholder="Last name"
+                            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-600 transition-colors">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Date of birth</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <select
+                            class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-600">
+                            <option>Month</option>
+                            <option>January</option>
+                            <option>February</option>
+                            <option>March</option>
+                        </select>
+                        <input type="number" placeholder="Day"
+                            class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-600">
+                        <input type="number" placeholder="Year"
+                            class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-600">
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 pt-2">
+                    <input type="checkbox" id="collaborator" class="w-4 h-4 text-blue-600 rounded">
+                    <label for="collaborator" class="text-sm text-slate-600">Invite as a collaborator</label>
+                </div>
+
+                <button
+                    class="w-full py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-all mt-6">
+                    Create Family ID
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool _showAddMemberModal = false;
+
+    private void OpenAddMemberModal()
+    {
+        _showAddMemberModal = true;
+    }
+
+    private void CloseAddMemberModal()
+    {
+        _showAddMemberModal = false;
+    }
+}

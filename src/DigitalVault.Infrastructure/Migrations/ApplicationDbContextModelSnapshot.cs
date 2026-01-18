@@ -22,324 +22,424 @@ namespace DigitalVault.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("DigitalVault.Domain.Entities.Account", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AuthenticationTag")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("EncryptedAccountName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("EncryptedMasterKey")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDefault")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("MasterKeySalt")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Accounts");
+                });
+
+            modelBuilder.Entity("DigitalVault.Domain.Entities.AccountCollaborator", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("AcceptedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("EncryptedMasterKeyForCollaborator")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("InvitationExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("InvitationStatus")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("InvitationToken")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("InvitedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("InvitedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastAccessedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("PermissionLevel")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("RevokedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InvitationToken");
+
+                    b.HasIndex("InvitedByUserId");
+
+                    b.HasIndex("RevokedByUserId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("AccountId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("AccountCollaborators", (string)null);
+                });
+
             modelBuilder.Entity("DigitalVault.Domain.Entities.AuditLog", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("Action")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("EntityId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("EntityType")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                    b.Property<string>("EncryptedDetails")
+                        .HasColumnType("text");
 
                     b.Property<string>("IpAddress")
-                        .HasMaxLength(45)
-                        .HasColumnType("character varying(45)");
+                        .HasColumnType("text");
 
-                    b.Property<string>("NewValue")
-                        .HasColumnType("jsonb");
+                    b.Property<Guid?>("ResourceId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("OldValue")
-                        .HasColumnType("jsonb");
-
-                    b.Property<DateTime>("Timestamp")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<string>("ResourceType")
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UserAgent")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Action");
-
-                    b.HasIndex("EntityId");
-
-                    b.HasIndex("EntityType");
-
-                    b.HasIndex("Timestamp");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AuditLogs", (string)null);
-                });
-
-            modelBuilder.Entity("DigitalVault.Domain.Entities.DeadManSwitch", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("CheckInIntervalDays")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(90);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("EmergencyEmail")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<string>("EmergencyPhone")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
-
-                    b.Property<int>("GracePeriodDays")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(14);
-
-                    b.Property<DateTime?>("GracePeriodStartedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true);
-
-                    b.Property<DateTime>("LastCheckInAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("NextCheckInDueDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("NotificationChannels")
-                        .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<string>("ReminderDays")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasDefaultValue("Active");
-
-                    b.Property<DateTime?>("TriggeredAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IsActive");
+                    b.HasIndex("AccountId");
 
-                    b.HasIndex("NextCheckInDueDate");
+                    b.HasIndex("UserId");
 
-                    b.HasIndex("Status");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("DeadManSwitches", (string)null);
+                    b.ToTable("AuditLogs");
                 });
 
-            modelBuilder.Entity("DigitalVault.Domain.Entities.Heir", b =>
+            modelBuilder.Entity("DigitalVault.Domain.Entities.Document", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("AccessLevel")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasDefaultValue("Full");
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uuid");
 
-                    b.Property<string>("CanAccessCategories")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DocumentType")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("EncryptedFileExtension")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("EncryptedFileSize")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("EncryptedMimeType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("EncryptedOriginalFileName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("EncryptionIV")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("EncryptionTag")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("FamilyMemberId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("S3BucketName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("S3ObjectKey")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("S3Region")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("FamilyMemberId");
+
+                    b.ToTable("Documents");
+                });
+
+            modelBuilder.Entity("DigitalVault.Domain.Entities.DocumentMetadata", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("DocumentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("EncryptedFieldName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("EncryptedFieldValue")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DocumentId");
+
+                    b.ToTable("DocumentMetadata");
+                });
+
+            modelBuilder.Entity("DigitalVault.Domain.Entities.FamilyMember", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AvatarColor")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Email")
+                    b.Property<string>("EncryptedDateOfBirth")
+                        .HasColumnType("text");
+
+                    b.Property<string>("EncryptedEmail")
+                        .HasColumnType("text");
+
+                    b.Property<string>("EncryptedFirstName")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("text");
 
-                    b.Property<byte[]>("EncryptedPrivateKey")
-                        .HasColumnType("bytea");
-
-                    b.Property<string>("FullName")
+                    b.Property<string>("EncryptedLastName")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("text");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
+                    b.Property<string>("EncryptedNotes")
+                        .HasColumnType("text");
 
-                    b.Property<bool>("IsVerified")
-                        .HasColumnType("boolean");
+                    b.Property<string>("EncryptedPhoneNumber")
+                        .HasColumnType("text");
 
-                    b.Property<byte[]>("PublicKey")
-                        .IsRequired()
-                        .HasColumnType("bytea");
+                    b.Property<string>("EncryptedRelationship")
+                        .HasColumnType("text");
 
-                    b.Property<string>("Relationship")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                    b.Property<string>("InitialsPlainText")
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("VerificationExpiresAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("VerificationToken")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<DateTime?>("VerifiedAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("Email");
+                    b.HasIndex("AccountId");
 
-                    b.HasIndex("IsDeleted");
-
-                    b.HasIndex("IsVerified");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("UserId", "Email")
-                        .IsUnique();
-
-                    b.ToTable("Heirs", (string)null);
+                    b.ToTable("FamilyMembers");
                 });
 
-            modelBuilder.Entity("DigitalVault.Domain.Entities.HeirAccessLog", b =>
+            modelBuilder.Entity("DigitalVault.Domain.Entities.FileAttachment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("AccessType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<DateTime>("AccessedAt")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("FailureReason")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                    b.Property<string>("EncryptedDescription")
+                        .HasColumnType("text");
 
-                    b.Property<Guid>("HeirId")
+                    b.Property<string>("EncryptedFileExtension")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("EncryptedFileName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("EncryptedFileSize")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("EncryptedFolderPath")
+                        .HasColumnType("text");
+
+                    b.Property<string>("EncryptedMimeType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("EncryptionIV")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("EncryptionTag")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("FamilyMemberId")
                         .HasColumnType("uuid");
 
-                    b.Property<string>("IpAddress")
-                        .HasMaxLength(45)
-                        .HasColumnType("character varying(45)");
+                    b.Property<string>("S3BucketName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("S3ObjectKey")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("S3Region")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("UserAgent")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("VaultEntryId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("WasSuccessful")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true);
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccessType");
+                    b.HasIndex("AccountId");
 
-                    b.HasIndex("AccessedAt");
+                    b.HasIndex("FamilyMemberId");
 
-                    b.HasIndex("HeirId");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("VaultEntryId");
-
-                    b.ToTable("HeirAccessLogs", (string)null);
+                    b.ToTable("FileAttachments");
                 });
 
-            modelBuilder.Entity("DigitalVault.Domain.Entities.HeirVaultAccess", b =>
+            modelBuilder.Entity("DigitalVault.Domain.Entities.Note", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("AccessGrantedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("CanAccess")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true);
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<byte[]>("EncryptedDataKey")
+                    b.Property<string>("EncryptedContent")
                         .IsRequired()
-                        .HasColumnType("bytea");
+                        .HasColumnType("text");
 
-                    b.Property<Guid>("HeirId")
+                    b.Property<string>("EncryptedTitle")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("FamilyMemberId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("VaultEntryId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("HeirId");
+                    b.HasIndex("AccountId");
 
-                    b.HasIndex("VaultEntryId");
+                    b.HasIndex("FamilyMemberId");
 
-                    b.HasIndex("HeirId", "VaultEntryId")
-                        .IsUnique();
-
-                    b.ToTable("HeirVaultAccesses", (string)null);
+                    b.ToTable("Notes");
                 });
 
             modelBuilder.Entity("DigitalVault.Domain.Entities.RefreshToken", b =>
@@ -353,16 +453,14 @@ namespace DigitalVault.Infrastructure.Migrations
 
                     b.Property<string>("DeviceName")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("IpAddress")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("LastUsedAt")
                         .HasColumnType("timestamp with time zone");
@@ -375,153 +473,23 @@ namespace DigitalVault.Infrastructure.Migrations
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UserAgent")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("text");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ExpiresAt");
-
-                    b.HasIndex("RevokedAt");
-
-                    b.HasIndex("Token")
-                        .IsUnique();
-
                     b.HasIndex("UserId");
 
-                    b.HasIndex("UserId", "RevokedAt", "ExpiresAt");
-
-                    b.ToTable("RefreshTokens", (string)null);
-                });
-
-            modelBuilder.Entity("DigitalVault.Domain.Entities.SwitchCheckIn", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CheckInAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CheckInMethod")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("IpAddress")
-                        .HasMaxLength(45)
-                        .HasColumnType("character varying(45)");
-
-                    b.Property<string>("Location")
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<Guid>("SwitchId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("UserAgent")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CheckInAt");
-
-                    b.HasIndex("SwitchId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("SwitchCheckIns", (string)null);
-                });
-
-            modelBuilder.Entity("DigitalVault.Domain.Entities.SwitchNotification", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Body")
-                        .HasMaxLength(5000)
-                        .HasColumnType("character varying(5000)");
-
-                    b.Property<string>("Channel")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<DateTime?>("CheckInLinkExpiresAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CheckInLinkToken")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeliveredAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("NotificationType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<DateTime>("SentAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasDefaultValue("sent");
-
-                    b.Property<string>("Subject")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<Guid>("SwitchId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("WasClickedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CheckInLinkToken")
-                        .IsUnique()
-                        .HasFilter("\"CheckInLinkToken\" IS NOT NULL");
-
-                    b.HasIndex("NotificationType");
-
-                    b.HasIndex("SentAt");
-
-                    b.HasIndex("SwitchId");
-
-                    b.ToTable("SwitchNotifications", (string)null);
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("DigitalVault.Domain.Entities.User", b =>
@@ -535,132 +503,60 @@ namespace DigitalVault.Infrastructure.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<bool>("EmailVerified")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("EncryptedMasterKey")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
-
-                    b.Property<int>("KeyDerivationIterations")
-                        .HasColumnType("integer");
-
-                    b.Property<byte[]>("KeyDerivationSalt")
-                        .IsRequired()
-                        .HasColumnType("bytea");
 
                     b.Property<DateTime?>("LastLoginAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("MfaEnabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("MfaSecret")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("text");
+
+                    b.Property<string>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
-
-                    b.Property<bool>("PhoneVerified")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Salt")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<DateTime?>("SubscriptionExpiresAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("SubscriptionTier")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasDefaultValue("Free");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedAt");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("IsDeleted");
-
-                    b.HasIndex("SubscriptionTier");
-
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("DigitalVault.Domain.Entities.VaultEntry", b =>
+            modelBuilder.Entity("DigitalVault.Domain.Entities.UserKeyPair", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("BlobStorageKey")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
-
-                    b.Property<string>("BlobStorageUrl")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<byte[]>("EncryptedContent")
-                        .HasColumnType("bytea");
-
-                    b.Property<byte[]>("EncryptedDataKey")
+                    b.Property<string>("EncryptedPrivateKey")
                         .IsRequired()
-                        .HasColumnType("bytea");
+                        .HasColumnType("text");
 
-                    b.Property<string>("EncryptionAlgorithm")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasDefaultValue("AES-256-GCM");
-
-                    b.Property<byte[]>("IV")
-                        .IsRequired()
-                        .HasColumnType("bytea");
-
-                    b.Property<bool>("IsDeleted")
+                    b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsSharedWithHeirs")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true);
-
-                    b.Property<string>("Title")
+                    b.Property<string>("KeyAlgorithm")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("text");
+
+                    b.Property<string>("PrivateKeySalt")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PublicKey")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -670,93 +566,153 @@ namespace DigitalVault.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Category");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
-                    b.HasIndex("CreatedAt");
+                    b.ToTable("UserKeyPairs");
+                });
 
-                    b.HasIndex("IsDeleted");
+            modelBuilder.Entity("DigitalVault.Domain.Entities.Account", b =>
+                {
+                    b.HasOne("DigitalVault.Domain.Entities.User", "User")
+                        .WithMany("Accounts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasIndex("UserId");
+                    b.Navigation("User");
+                });
 
-                    b.ToTable("VaultEntries", (string)null);
+            modelBuilder.Entity("DigitalVault.Domain.Entities.AccountCollaborator", b =>
+                {
+                    b.HasOne("DigitalVault.Domain.Entities.Account", "Account")
+                        .WithMany("Collaborators")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DigitalVault.Domain.Entities.User", "InvitedBy")
+                        .WithMany()
+                        .HasForeignKey("InvitedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DigitalVault.Domain.Entities.User", "RevokedBy")
+                        .WithMany()
+                        .HasForeignKey("RevokedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("DigitalVault.Domain.Entities.User", "User")
+                        .WithMany("Collaborations")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("InvitedBy");
+
+                    b.Navigation("RevokedBy");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("DigitalVault.Domain.Entities.AuditLog", b =>
                 {
-                    b.HasOne("DigitalVault.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DigitalVault.Domain.Entities.DeadManSwitch", b =>
-                {
-                    b.HasOne("DigitalVault.Domain.Entities.User", "User")
-                        .WithOne("DeadManSwitch")
-                        .HasForeignKey("DigitalVault.Domain.Entities.DeadManSwitch", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DigitalVault.Domain.Entities.Heir", b =>
-                {
-                    b.HasOne("DigitalVault.Domain.Entities.User", "User")
-                        .WithMany("Heirs")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DigitalVault.Domain.Entities.HeirAccessLog", b =>
-                {
-                    b.HasOne("DigitalVault.Domain.Entities.Heir", "Heir")
-                        .WithMany("AccessLogs")
-                        .HasForeignKey("HeirId")
+                    b.HasOne("DigitalVault.Domain.Entities.Account", "Account")
+                        .WithMany("AuditLogs")
+                        .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("DigitalVault.Domain.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DigitalVault.Domain.Entities.VaultEntry", "VaultEntry")
-                        .WithMany()
-                        .HasForeignKey("VaultEntryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Heir");
+                    b.Navigation("Account");
 
                     b.Navigation("User");
-
-                    b.Navigation("VaultEntry");
                 });
 
-            modelBuilder.Entity("DigitalVault.Domain.Entities.HeirVaultAccess", b =>
+            modelBuilder.Entity("DigitalVault.Domain.Entities.Document", b =>
                 {
-                    b.HasOne("DigitalVault.Domain.Entities.Heir", "Heir")
-                        .WithMany("VaultAccesses")
-                        .HasForeignKey("HeirId")
+                    b.HasOne("DigitalVault.Domain.Entities.Account", "Account")
+                        .WithMany("Documents")
+                        .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DigitalVault.Domain.Entities.VaultEntry", "VaultEntry")
-                        .WithMany("HeirAccesses")
-                        .HasForeignKey("VaultEntryId")
+                    b.HasOne("DigitalVault.Domain.Entities.FamilyMember", "FamilyMember")
+                        .WithMany("Documents")
+                        .HasForeignKey("FamilyMemberId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Heir");
+                    b.Navigation("Account");
 
-                    b.Navigation("VaultEntry");
+                    b.Navigation("FamilyMember");
+                });
+
+            modelBuilder.Entity("DigitalVault.Domain.Entities.DocumentMetadata", b =>
+                {
+                    b.HasOne("DigitalVault.Domain.Entities.Document", "Document")
+                        .WithMany("Metadata")
+                        .HasForeignKey("DocumentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Document");
+                });
+
+            modelBuilder.Entity("DigitalVault.Domain.Entities.FamilyMember", b =>
+                {
+                    b.HasOne("DigitalVault.Domain.Entities.Account", "Account")
+                        .WithMany("FamilyMembers")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
+            modelBuilder.Entity("DigitalVault.Domain.Entities.FileAttachment", b =>
+                {
+                    b.HasOne("DigitalVault.Domain.Entities.Account", "Account")
+                        .WithMany("FileAttachments")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DigitalVault.Domain.Entities.FamilyMember", "FamilyMember")
+                        .WithMany("FileAttachments")
+                        .HasForeignKey("FamilyMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("FamilyMember");
+                });
+
+            modelBuilder.Entity("DigitalVault.Domain.Entities.Note", b =>
+                {
+                    b.HasOne("DigitalVault.Domain.Entities.Account", "Account")
+                        .WithMany("Notes")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DigitalVault.Domain.Entities.FamilyMember", "FamilyMember")
+                        .WithMany("Notes")
+                        .HasForeignKey("FamilyMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("FamilyMember");
                 });
 
             modelBuilder.Entity("DigitalVault.Domain.Entities.RefreshToken", b =>
@@ -770,73 +726,53 @@ namespace DigitalVault.Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("DigitalVault.Domain.Entities.SwitchCheckIn", b =>
-                {
-                    b.HasOne("DigitalVault.Domain.Entities.DeadManSwitch", "Switch")
-                        .WithMany("CheckIns")
-                        .HasForeignKey("SwitchId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DigitalVault.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Switch");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("DigitalVault.Domain.Entities.SwitchNotification", b =>
-                {
-                    b.HasOne("DigitalVault.Domain.Entities.DeadManSwitch", "Switch")
-                        .WithMany("Notifications")
-                        .HasForeignKey("SwitchId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Switch");
-                });
-
-            modelBuilder.Entity("DigitalVault.Domain.Entities.VaultEntry", b =>
+            modelBuilder.Entity("DigitalVault.Domain.Entities.UserKeyPair", b =>
                 {
                     b.HasOne("DigitalVault.Domain.Entities.User", "User")
-                        .WithMany("VaultEntries")
-                        .HasForeignKey("UserId")
+                        .WithOne("KeyPair")
+                        .HasForeignKey("DigitalVault.Domain.Entities.UserKeyPair", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("DigitalVault.Domain.Entities.DeadManSwitch", b =>
+            modelBuilder.Entity("DigitalVault.Domain.Entities.Account", b =>
                 {
-                    b.Navigation("CheckIns");
+                    b.Navigation("AuditLogs");
 
-                    b.Navigation("Notifications");
+                    b.Navigation("Collaborators");
+
+                    b.Navigation("Documents");
+
+                    b.Navigation("FamilyMembers");
+
+                    b.Navigation("FileAttachments");
+
+                    b.Navigation("Notes");
                 });
 
-            modelBuilder.Entity("DigitalVault.Domain.Entities.Heir", b =>
+            modelBuilder.Entity("DigitalVault.Domain.Entities.Document", b =>
                 {
-                    b.Navigation("AccessLogs");
+                    b.Navigation("Metadata");
+                });
 
-                    b.Navigation("VaultAccesses");
+            modelBuilder.Entity("DigitalVault.Domain.Entities.FamilyMember", b =>
+                {
+                    b.Navigation("Documents");
+
+                    b.Navigation("FileAttachments");
+
+                    b.Navigation("Notes");
                 });
 
             modelBuilder.Entity("DigitalVault.Domain.Entities.User", b =>
                 {
-                    b.Navigation("DeadManSwitch");
+                    b.Navigation("Accounts");
 
-                    b.Navigation("Heirs");
+                    b.Navigation("Collaborations");
 
-                    b.Navigation("VaultEntries");
-                });
-
-            modelBuilder.Entity("DigitalVault.Domain.Entities.VaultEntry", b =>
-                {
-                    b.Navigation("HeirAccesses");
+                    b.Navigation("KeyPair");
                 });
 #pragma warning restore 612, 618
         }

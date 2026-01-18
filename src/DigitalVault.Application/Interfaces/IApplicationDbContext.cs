@@ -6,13 +6,14 @@ namespace DigitalVault.Application.Interfaces;
 public interface IApplicationDbContext
 {
     DbSet<User> Users { get; }
-    DbSet<VaultEntry> VaultEntries { get; }
-    DbSet<Heir> Heirs { get; }
-    DbSet<HeirVaultAccess> HeirVaultAccesses { get; }
-    DbSet<DeadManSwitch> DeadManSwitches { get; }
-    DbSet<SwitchCheckIn> SwitchCheckIns { get; }
-    DbSet<SwitchNotification> SwitchNotifications { get; }
-    DbSet<HeirAccessLog> HeirAccessLogs { get; }
+    DbSet<Account> Accounts { get; }
+    DbSet<FamilyMember> FamilyMembers { get; }
+    DbSet<Document> Documents { get; }
+    DbSet<DocumentMetadata> DocumentMetadata { get; }
+    DbSet<FileAttachment> FileAttachments { get; }
+    DbSet<Note> Notes { get; }
+    DbSet<AccountCollaborator> AccountCollaborators { get; }
+    DbSet<UserKeyPair> UserKeyPairs { get; }
     DbSet<AuditLog> AuditLogs { get; }
     DbSet<RefreshToken> RefreshTokens { get; }
 

@@ -1,0 +1,412 @@
+﻿@page "/"
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@layout DashboardLayout
+@inject NavigationManager Navigation
+
+<PageTitle>Trustworthy - Family Operating System</PageTitle>
+
+<!-- Hero Section -->
+<section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+    <!-- Background Decor -->
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-50 rounded-full blur-[120px] opacity-60">
+        </div>
+        <div
+            class="absolute bottom-[10%] right-[-5%] w-[30%] h-[30%] bg-indigo-50 rounded-full blur-[100px] opacity-60">
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div
+            class="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 px-4 py-1.5 rounded-full text-blue-700 text-sm font-bold mb-8 animate-bounce">
+            <span class="relative flex h-2 w-2">
+                <span
+                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+            </span>
+            Family OS ยุคใหม่
+        </div>
+        <h1 class="text-5xl lg:text-7xl font-extrabold text-slate-900 mb-8 leading-[1.1] tracking-tight">
+            จัดระเบียบทุกชีวิตในบ้าน <br>
+            <span
+                class="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent italic font-black">ด้วยระบบเดียว</span>
+        </h1>
+        <p class="text-lg lg:text-xl text-slate-600 mb-12 max-w-2xl mx-auto leading-relaxed">
+            มากกว่าแค่การเก็บไฟล์ แต่คือระบบปฏิบัติการอัจฉริยะที่ดูแลเอกสาร แผนการเงิน
+            และการแจ้งเตือนทุกเรื่องสำคัญ เพื่อความมั่นคงของครอบครัวคุณ
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
+            <a href="#vault"
+                class="w-full sm:w-auto bg-slate-900 text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-slate-800 transition-all shadow-2xl shadow-slate-200 active:scale-95">
+                สร้างตู้เซฟครอบครัว (ฟรี)
+            </a>
+            <a href="#"
+                class="w-full sm:w-auto bg-white border border-slate-200 text-slate-700 px-10 py-5 rounded-2xl font-bold text-lg hover:bg-slate-50 transition-all active:scale-95">
+                <i class="fas fa-play-circle mr-2 text-blue-600"></i> ดูวิธีใช้งาน
+            </a>
+        </div>
+
+        <!-- Trust Badges -->
+        <div
+            class="flex flex-wrap justify-center items-center gap-8 lg:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+            <span class="font-bold text-xl tracking-widest uppercase">Forbes</span>
+            <span class="font-bold text-xl tracking-widest uppercase">TechCrunch</span>
+            <span class="font-bold text-xl tracking-widest uppercase">Wall Street Journal</span>
+            <span class="font-bold text-xl tracking-widest uppercase">Wired</span>
+        </div>
+    </div>
+</section>
+
+<!-- Main Dashboard UI Mockup -->
+<section id="vault" class="py-20 bg-[#f8fafc]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl lg:text-4xl font-extrabold text-slate-900 mb-4">The Family Vault</h2>
+            <p class="text-slate-500">รวมศูนย์ 9 หมวดหมู่เอกสารสำคัญให้ค้นหาได้ใน 3 วินาที</p>
+        </div>
+
+        <div class="bg-white rounded-[2.5rem] shadow-2xl shadow-blue-900/5 border border-slate-200 overflow-hidden">
+            <!-- Inner Dashboard Header -->
+            <div
+                class="p-8 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div>
+                    <nav class="flex gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">
+                        <span>Workspace</span> <i class="fas fa-chevron-right text-[10px] self-center"></i> <span>Family
+                            Vault</span>
+                    </nav>
+                    <h3 class="text-2xl font-bold text-slate-900">ตู้เซฟอัจฉริยะ: บ้านเศรษฐาธิโชติ</h3>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div
+                        class="bg-emerald-50 text-emerald-700 px-5 py-3 rounded-2xl flex items-center gap-4 border border-emerald-100/50">
+                        <div class="text-right">
+                            <p class="text-[10px] uppercase font-black tracking-tighter opacity-70 leading-none">
+                                Readiness Score</p>
+                            <p class="text-lg font-black">82%</p>
+                        </div>
+                        <div class="w-10 h-10 flex items-center justify-center bg-emerald-500 text-white rounded-full">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <button
+                        class="bg-blue-50 text-blue-600 h-12 w-12 rounded-2xl flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all"
+                        @onclick="OpenAddModal">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-8 lg:p-12">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Category Cards -->
+                    <div
+                        class="vault-card p-6 bg-slate-50 rounded-3xl border border-slate-200/60 flex flex-col cursor-pointer">
+                        <div
+                            class="bg-blue-600 w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl mb-6 shadow-lg shadow-blue-200">
+                            <i class="fas fa-passport"></i>
+                        </div>
+                        <h4 class="font-bold text-lg text-slate-900 mb-1">IDs & Passports</h4>
+                        <p class="text-sm text-slate-500 mb-6">จัดเก็บตัวตนและเอกสารเดินทางของทุกคน</p>
+                        <div class="mt-auto flex justify-between items-center">
+                            <span class="text-xs font-bold px-3 py-1 bg-white rounded-full border border-slate-200">12
+                                ไฟล์</span>
+                            <i class="fas fa-arrow-right text-slate-300 group-hover:text-blue-600"></i>
+                        </div>
+                    </div>
+
+                    <div
+                        class="vault-card p-6 bg-slate-50 rounded-3xl border border-slate-200/60 flex flex-col cursor-pointer">
+                        <div
+                            class="bg-purple-600 w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl mb-6 shadow-lg shadow-purple-200">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                        <h4 class="font-bold text-lg text-slate-900 mb-1">Estate Planning</h4>
+                        <p class="text-sm text-slate-500 mb-6">พินัยกรรม และการจัดการมรดก</p>
+                        <div class="mt-auto flex justify-between items-center">
+                            <span class="text-xs font-bold px-3 py-1 bg-white rounded-full border border-slate-200">4
+                                ไฟล์</span>
+                            <i class="fas fa-arrow-right text-slate-300"></i>
+                        </div>
+                    </div>
+
+                    <div
+                        class="vault-card p-6 bg-slate-50 rounded-3xl border border-slate-200/60 flex flex-col cursor-pointer">
+                        <div
+                            class="bg-emerald-600 w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl mb-6 shadow-lg shadow-emerald-200">
+                            <i class="fas fa-piggy-bank"></i>
+                        </div>
+                        <h4 class="font-bold text-lg text-slate-900 mb-1">Financial</h4>
+                        <p class="text-sm text-slate-500 mb-6">บัญชีธนาคาร และพอร์ตการลงทุน</p>
+                        <div class="mt-auto flex justify-between items-center">
+                            <span class="text-xs font-bold px-3 py-1 bg-white rounded-full border border-slate-200">8
+                                รายการ</span>
+                            <i class="fas fa-arrow-right text-slate-300"></i>
+                        </div>
+                    </div>
+
+                    <!-- 4-6 categories (Simplified for space) -->
+                    <div
+                        class="vault-card p-6 bg-white rounded-3xl border border-slate-200 flex flex-col cursor-pointer">
+                        <div
+                            class="bg-orange-500 w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl mb-6 shadow-lg shadow-orange-200">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <h4 class="font-bold text-lg text-slate-900 mb-1">Taxes</h4>
+                        <p class="text-sm text-slate-500 mb-6">แบบภาษีและเอกสารลดหย่อนรายปี</p>
+                        <div class="mt-auto flex justify-between items-center">
+                            <span class="text-xs font-bold px-3 py-1 bg-slate-100 rounded-full">ย้อนหลัง 5 ปี</span>
+                        </div>
+                    </div>
+
+                    <div
+                        class="vault-card p-6 bg-white rounded-3xl border border-slate-200 flex flex-col cursor-pointer">
+                        <div
+                            class="bg-red-500 w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl mb-6 shadow-lg shadow-red-200">
+                            <i class="fas fa-shield-heart"></i>
+                        </div>
+                        <h4 class="font-bold text-lg text-slate-900 mb-1">Insurance</h4>
+                        <p class="text-sm text-slate-500 mb-6">กรมธรรม์ประกันชีวิตและสุขภาพ</p>
+                        <div class="mt-auto flex justify-between items-center">
+                            <span
+                                class="text-xs font-bold px-3 py-1 bg-red-50 text-red-600 rounded-full border border-red-100">ใกล้หมดอายุ
+                                1</span>
+                        </div>
+                    </div>
+
+                    <div
+                        class="vault-card p-6 bg-white rounded-3xl border border-slate-200 flex flex-col cursor-pointer">
+                        <div
+                            class="bg-indigo-600 w-12 h-12 rounded-2xl flex items-center justify-center text-white text-xl mb-6 shadow-lg shadow-indigo-200">
+                            <i class="fas fa-landmark"></i>
+                        </div>
+                        <h4 class="font-bold text-lg text-slate-900 mb-1">Property</h4>
+                        <p class="text-sm text-slate-500 mb-6">โฉนดที่ดิน และเอกสารสินเชื่อบ้าน</p>
+                        <div class="mt-auto flex justify-between items-center">
+                            <span class="text-xs font-bold px-3 py-1 bg-slate-100 rounded-full">3 โฉนด</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Dashboard Area -->
+                <div class="mt-12 grid grid-cols-1 lg:grid-cols-5 gap-8">
+                    <!-- Smart Checklist -->
+                    <div class="lg:col-span-3 bg-slate-900 rounded-[2rem] p-8 text-white">
+                        <div class="flex items-center gap-3 mb-8">
+                            <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-magic"></i>
+                            </div>
+                            <h5 class="text-xl font-bold">Personalized Checklists</h5>
+                        </div>
+                        <div class="space-y-4">
+                            <div
+                                class="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
+                                <div
+                                    class="w-6 h-6 border-2 border-blue-500 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-check text-[10px] text-blue-500 opacity-0"></i>
+                                </div>
+                                <p class="text-sm font-medium">เพิ่มสำเนาทะเบียนบ้านเพื่อความสมบูรณ์ของข้อมูล Property
+                                </p>
+                            </div>
+                            <div
+                                class="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
+                                <div
+                                    class="w-6 h-6 border-2 border-emerald-500 rounded-full flex items-center justify-center bg-emerald-500">
+                                    <i class="fas fa-check text-[10px] text-white"></i>
+                                </div>
+                                <p class="text-sm font-medium opacity-60 line-through">อัปโหลดพาสปอร์ตของลูกๆ ทั้ง 2
+                                    คนเรียบร้อย</p>
+                            </div>
+                            <div
+                                class="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-colors">
+                                <div class="w-6 h-6 border-2 border-amber-500 rounded-full"></div>
+                                <p class="text-sm font-medium">ตั้งค่าผู้รับมอบอำนาจกรณีฉุกเฉิน (Emergency Contact)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alerts -->
+                    <div class="lg:col-span-2 flex flex-col gap-4">
+                        <div class="flex-1 bg-rose-50 border border-rose-100 rounded-[2rem] p-8">
+                            <div class="flex items-center gap-3 text-rose-600 mb-4 font-bold">
+                                <i class="fas fa-bell"></i> แจ้งเตือนหมดอายุ
+                            </div>
+                            <div class="space-y-4">
+                                <div class="bg-white p-4 rounded-2xl shadow-sm border border-rose-100">
+                                    <p class="text-xs font-bold text-rose-500 uppercase mb-1">Passport - สมชาย</p>
+                                    <p class="text-sm font-bold text-slate-800">หมดอายุในอีก 45 วัน</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-2xl shadow-sm border border-rose-100">
+                                    <p class="text-xs font-bold text-rose-500 uppercase mb-1">Insurance - ประกันรถยนต์
+                                    </p>
+                                    <p class="text-sm font-bold text-slate-800">ครบกำหนดต่ออายุ 12 พ.ค.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Security & Trust Section -->
+<section id="security" class="py-24 bg-white overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col lg:flex-row items-center gap-20">
+            <div class="lg:w-1/2">
+                <div
+                    class="inline-block bg-emerald-50 text-emerald-600 px-4 py-1.5 rounded-full text-sm font-bold mb-6">
+                    SECURITY AT CORE
+                </div>
+                <h2 class="text-4xl lg:text-5xl font-black text-slate-900 mb-8 leading-tight">
+                    เราดูแลข้อมูลของคุณ <br>
+                    <span class="text-blue-600">ประหนึ่งทรัพย์สินส่วนตัว</span>
+                </h2>
+                <div class="space-y-8">
+                    <div class="flex gap-5">
+                        <div
+                            class="flex-shrink-0 w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-900 text-xl">
+                            <i class="fas fa-fingerprint"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1">Bank-Level Encryption (AES-256)</h4>
+                            <p class="text-slate-600">ข้อมูลทั้งหมดถูกเข้ารหัสในระดับสูงสุดที่ธนาคารสากลใช้
+                                แม้แต่ทีมงานเราก็ไม่สามารถเปิดดูได้</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-5">
+                        <div
+                            class="flex-shrink-0 w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-900 text-xl">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1">SOC 2 Type II Compliant</h4>
+                            <p class="text-slate-600">
+                                ผ่านการตรวจสอบและรับรองมาตรฐานความปลอดภัยระดับสากลอย่างต่อเนื่องทุกปี</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-5">
+                        <div
+                            class="flex-shrink-0 w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-900 text-xl">
+                            <i class="fas fa-key"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg mb-1">Zero-Knowledge Architecture</h4>
+                            <p class="text-slate-600">คุณคือเจ้าของกุญแจเพียงผู้เดียว
+                                ระบบถูกออกแบบให้ความเป็นส่วนตัวเป็นสิทธิ์ขาดของคุณ</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:w-1/2 relative">
+                <div
+                    class="bg-gradient-to-br from-blue-600 to-indigo-700 p-12 rounded-[3rem] text-white shadow-2xl relative">
+                    <!-- Shield Graphic -->
+                    <div class="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                    <div class="relative z-10">
+                        <div
+                            class="w-20 h-20 bg-white/20 rounded-3xl flex items-center justify-center text-4xl mb-8 backdrop-blur-md">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4 class="text-3xl font-bold mb-4">ระบบยืนยันตัวตน 2 ชั้น</h4>
+                        <p class="text-blue-100 text-lg mb-8 leading-relaxed">ทุกการเข้าถึงข้อมูลอ่อนไหว
+                            ต้องผ่านการยืนยันตัวตนด้วย Biometric หรือ OTP เสมอ เพื่อให้มั่นใจว่าเป็นคุณจริงๆ</p>
+                        <div class="bg-white/10 p-4 rounded-2xl border border-white/20 flex items-center gap-4">
+                            <div
+                                class="w-10 h-10 bg-emerald-400 rounded-full flex items-center justify-center text-slate-900">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <span class="font-bold">Face ID / Touch ID Enabled</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mobile App Promo -->
+<section class="py-24 bg-slate-50 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+            class="bg-white rounded-[3rem] p-10 lg:p-20 border border-slate-200 flex flex-col lg:flex-row items-center gap-16 relative shadow-xl">
+            <div class="lg:w-1/2">
+                <h2 class="text-4xl font-black text-slate-900 mb-6">ตู้เซฟในกระเป๋ากางเกง</h2>
+                <p class="text-xl text-slate-600 mb-8 leading-relaxed">
+                    แอปพลิเคชัน Trustworthy ให้คุณสแกนเอกสาร อัปโหลด และค้นหาข้อมูลได้ทุกที่ ทุกเวลา
+                    มาพร้อมระบบซิงค์ข้อมูลแบบเรียลไทม์ระหว่างทุกอุปกรณ์ของคุณ
+                </p>
+                <div class="flex flex-wrap gap-4">
+                    <button
+                        class="bg-black text-white px-8 py-4 rounded-2xl flex items-center gap-3 hover:scale-105 transition-transform">
+                        <i class="fab fa-apple text-3xl"></i>
+                        <div class="text-left">
+                            <p class="text-[10px] uppercase font-bold opacity-60">Download on the</p>
+                            <p class="text-lg font-bold leading-none">App Store</p>
+                        </div>
+                    </button>
+                    <button
+                        class="bg-black text-white px-8 py-4 rounded-2xl flex items-center gap-3 hover:scale-105 transition-transform">
+                        <i class="fab fa-google-play text-2xl text-emerald-400"></i>
+                        <div class="text-left">
+                            <p class="text-[10px] uppercase font-bold opacity-60">Get it on</p>
+                            <p class="text-lg font-bold leading-none">Google Play</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="lg:w-1/2">
+                <!-- Placeholder for App Illustration -->
+                <div class="relative max-w-[300px] mx-auto">
+                    <div
+                        class="bg-slate-900 w-[280px] h-[580px] rounded-[3rem] border-[8px] border-slate-800 shadow-2xl relative overflow-hidden">
+                        <div class="absolute top-0 w-full h-8 bg-slate-800 flex justify-center items-end pb-1">
+                            <div class="w-20 h-4 bg-slate-900 rounded-full"></div>
+                        </div>
+                        <div class="p-6 pt-12">
+                            <div class="w-12 h-12 bg-blue-600 rounded-xl mb-6"></div>
+                            <div class="h-4 w-32 bg-slate-800 rounded mb-4"></div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="h-24 bg-slate-800 rounded-2xl"></div>
+                                <div class="h-24 bg-slate-800 rounded-2xl"></div>
+                                <div class="h-24 bg-slate-800 rounded-2xl"></div>
+                                <div class="h-24 bg-slate-800 rounded-2xl"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute -bottom-6 -right-12 w-48 h-48 bg-blue-100 rounded-full -z-10 blur-2xl"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Final CTA -->
+<section class="py-32 relative overflow-hidden">
+    <div class="absolute inset-0 bg-blue-600 -z-10"></div>
+    <div class="max-w-4xl mx-auto px-4 text-center text-white">
+        <h2 class="text-4xl lg:text-6xl font-black mb-8">ความอุ่นใจของครอบครัว <br>เริ่มได้วันนี้</h2>
+        <p class="text-xl text-blue-100 mb-12 max-w-2xl mx-auto">
+            ใช้เวลาน้อยลงในการค้นหาเอกสาร และมีเวลามากขึ้นในการดูแลคนที่คุณรัก เข้าร่วมกับกว่า 50,000
+            ครอบครัวที่วางใจเรา
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center items-center gap-6">
+            <button
+                class="bg-white text-blue-600 px-12 py-6 rounded-3xl font-black text-xl hover:bg-blue-50 transition-all shadow-2xl shadow-blue-900/20 active:scale-95">
+                เริ่มต้นใช้งานฟรี 14 วัน
+            </button>
+        </div>
+        <p class="mt-8 text-blue-200 text-sm font-medium">ไม่ต้องใส่ข้อมูลบัตรเครดิต | ยกเลิกได้ตลอดเวลา</p>
+    </div>
+</section>
+
+@code {
+    [CascadingParameter] public MainLayout? Layout { get; set; }
+
+    private void OpenAddModal()
+    {
+        Layout?.OpenModal();
+    }
+}

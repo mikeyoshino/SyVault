@@ -1,26 +1,25 @@
-using System.Security.Cryptography;
 using DigitalVault.Application.Interfaces;
 using DigitalVault.Domain.Entities;
-using DigitalVault.Domain.Enums;
 using DigitalVault.Shared.DTOs.Auth;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace DigitalVault.Application.Commands.Auth;
 
 public class RegisterCommandHandler : IRequestHandler<RegisterCommand, AuthResponse>
 {
     private readonly IApplicationDbContext _context;
-    private readonly ITokenService _tokenService;
     private readonly IPasswordHasher _passwordHasher;
+    private readonly ITokenService _tokenService;
 
     public RegisterCommandHandler(
         IApplicationDbContext context,
-        ITokenService tokenService,
-        IPasswordHasher passwordHasher)
+        IPasswordHasher passwordHasher,
+        ITokenService tokenService)
     {
         _context = context;
-        _tokenService = tokenService;
         _passwordHasher = passwordHasher;
+        _tokenService = tokenService;
     }
 
     public async Task<AuthResponse> Handle(RegisterCommand request, CancellationToken cancellationToken)
@@ -34,7 +33,7 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, AuthRespo
             throw new InvalidOperationException("User with this email already exists");
         }
 
-        // Hash password for account authentication
+        // Hash password
         var (passwordHash, salt) = _passwordHasher.HashPassword(request.Password);
 
         // Create user
@@ -43,13 +42,9 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, AuthRespo
             Email = request.Email,
             PhoneNumber = request.PhoneNumber,
             PasswordHash = passwordHash,
-            Salt = salt,
-            KeyDerivationSalt = request.KeyDerivationSalt, // Use client-provided salt (critical for decryption!)
-            KeyDerivationIterations = request.KeyDerivationIterations,
-            EncryptedMasterKey = request.EncryptedMasterKey, // Store encrypted master key (zero knowledge)
-            SubscriptionTier = SubscriptionTier.Free,
-            EmailVerified = false,
-            MfaEnabled = false
+            PasswordSalt = salt,
+            IsActive = true,
+            LastLoginAt = DateTime.UtcNow
         };
 
         _context.Users.Add(user);
@@ -59,45 +54,32 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, AuthRespo
         var accessToken = _tokenService.GenerateAccessToken(user);
         var refreshToken = _tokenService.GenerateRefreshToken();
 
-        // Store refresh token with device info
-        var deviceName = string.IsNullOrEmpty(request.UserAgent)
-            ? "Unknown Device"
-            : (request.UserAgent.Contains("Chrome") ? "Chrome" :
-               request.UserAgent.Contains("Firefox") ? "Firefox" :
-               request.UserAgent.Contains("Safari") ? "Safari" : "Unknown") +
-              " on " +
-              (request.UserAgent.Contains("Windows") ? "Windows" :
-               request.UserAgent.Contains("Mac") ? "macOS" :
-               request.UserAgent.Contains("Linux") ? "Linux" : "Unknown");
-
+        // Store refresh token
         await _tokenService.StoreRefreshTokenAsync(
             user.Id,
             refreshToken,
-            deviceName,
+            "Web Browser",
             request.IpAddress,
             request.UserAgent,
             cancellationToken);
 
-        var expiresAt = DateTime.UtcNow.AddMinutes(60);
+        // Map to DTO
+        var userDto = new UserDto
+        {
+            Id = user.Id,
+            Email = user.Email,
+            PhoneNumber = user.PhoneNumber,
+            LastLoginAt = user.LastLoginAt,
+            IsActive = user.IsActive,
+            CreatedAt = user.CreatedAt
+        };
 
         return new AuthResponse
         {
+            User = userDto,
             AccessToken = accessToken,
             RefreshToken = refreshToken,
-            ExpiresAt = expiresAt,
-            User = new UserDto
-            {
-                Id = user.Id,
-                Email = user.Email,
-                EmailVerified = user.EmailVerified,
-                PhoneNumber = user.PhoneNumber,
-                MfaEnabled = user.MfaEnabled,
-                SubscriptionTier = user.SubscriptionTier.ToString(),
-                SubscriptionExpiresAt = user.SubscriptionExpiresAt,
-                KeyDerivationSalt = user.KeyDerivationSalt,
-                KeyDerivationIterations = user.KeyDerivationIterations,
-                EncryptedMasterKey = user.EncryptedMasterKey
-            }
+            ExpiresAt = DateTime.UtcNow.AddMinutes(60)
         };
     }
 }

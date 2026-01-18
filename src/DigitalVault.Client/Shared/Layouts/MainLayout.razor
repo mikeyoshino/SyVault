@@ -1,0 +1,168 @@
+@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+
+<CascadingValue Value="this">
+    <div class="bg-[#fcfdfe] text-slate-900 min-h-screen flex flex-col font-['Anuphan']">
+        <!-- Navigation -->
+        <nav class="fixed top-0 w-full z-50 glass border-b border-slate-200/60">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-18 items-center py-4">
+                    <div class="flex items-center gap-2.5 group cursor-pointer"
+                        @onclick="@(() => Navigation.NavigateTo("/"))">
+                        <div
+                            class="bg-blue-600 p-2 rounded-xl text-white shadow-lg shadow-blue-200 transition-transform group-hover:scale-105">
+                            <i class="fas fa-shield-halved text-xl"></i>
+                        </div>
+                        <span
+                            class="text-2xl font-bold tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                            Trustworthy
+                        </span>
+                    </div>
+
+                    <div class="hidden lg:flex items-center space-x-10 text-[15px] font-medium text-slate-600">
+                        <a href="#vault" class="hover:text-blue-600 transition-colors">The Vault</a>
+                        <a href="#features" class="hover:text-blue-600 transition-colors">ฟังก์ชันหลัก</a>
+                        <a href="#security" class="hover:text-blue-600 transition-colors">ความปลอดภัย</a>
+                        <a href="#pricing" class="hover:text-blue-600 transition-colors">ราคา</a>
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                        <button class="text-slate-600 font-semibold hover:text-slate-900 px-4 py-2"
+                            @onclick="Logout">ออกจากระบบ</button>
+                        <button
+                            class="bg-blue-600 text-white px-6 py-2.5 rounded-full font-bold shadow-lg shadow-blue-100 hover:bg-blue-700 hover:shadow-blue-200 transition-all active:scale-95">
+                            เริ่มใช้งานฟรี
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content (Padding for fixed nav) -->
+        <main class="flex-grow pt-24">
+            @Body
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-slate-950 text-slate-400 py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
+                    <div class="col-span-1 lg:col-span-1">
+                        <div class="flex items-center gap-2 mb-8">
+                            <div class="bg-blue-600 p-1.5 rounded-lg text-white">
+                                <i class="fas fa-shield-halved"></i>
+                            </div>
+                            <span class="text-2xl font-bold text-white tracking-tighter">Trustworthy</span>
+                        </div>
+                        <p class="text-sm leading-relaxed mb-6">
+                            ผู้นำด้านระบบปฏิบัติการสำหรับครอบครัว (Family Operating System)
+                            ที่มุ่งเน้นความปลอดภัย ความเป็นส่วนตัว และความสะดวกสบายในการจัดการข้อมูลสำคัญ
+                        </p>
+                        <div class="flex gap-4">
+                            <a href="#"
+                                class="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all"><i
+                                    class="fab fa-facebook-f"></i></a>
+                            <a href="#"
+                                class="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all"><i
+                                    class="fab fa-twitter"></i></a>
+                            <a href="#"
+                                class="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all"><i
+                                    class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h5 class="text-white font-bold mb-8">การใช้งาน</h5>
+                        <ul class="space-y-4 text-sm">
+                            <li><a href="#" class="hover:text-blue-500">The Family Vault</a></li>
+                            <li><a href="#" class="hover:text-blue-500">Estate Planning</a></li>
+                            <li><a href="#" class="hover:text-blue-500">Smart Checklists</a></li>
+                            <li><a href="#" class="hover:text-blue-500">Emergency Access</a></li>
+                            <li><a href="#" class="hover:text-blue-500">Pricing</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h5 class="text-white font-bold mb-8">บริษัท</h5>
+                        <ul class="space-y-4 text-sm">
+                            <li><a href="#" class="hover:text-blue-500">เกี่ยวกับเรา</a></li>
+                            <li><a href="#" class="hover:text-blue-500">ความปลอดภัย</a></li>
+                            <li><a href="#" class="hover:text-blue-500">บทความ</a></li>
+                            <li><a href="#" class="hover:text-blue-500">ร่วมงานกับเรา</a></li>
+                            <li><a href="#" class="hover:text-blue-500">ติดต่อเรา</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h5 class="text-white font-bold mb-8">รับข่าวสารใหม่ๆ</h5>
+                        <p class="text-sm mb-6">รับคำแนะนำในการจัดระเบียบครอบครัวส่งตรงถึงอีเมลคุณ</p>
+                        <div class="flex flex-col gap-3">
+                            <input type="email" placeholder="อีเมลของคุณ"
+                                class="bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600">
+                            <button
+                                class="bg-blue-600 text-white py-3 rounded-xl font-bold text-sm hover:bg-blue-700 transition-all">ติดตาม</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="pt-10 border-t border-slate-900 flex flex-col md:flex-row justify-between items-center gap-6 text-xs uppercase tracking-widest font-bold">
+                    <p>© 2024 Trustworthy Family OS. All rights reserved.</p>
+                    <div class="flex gap-10">
+                        <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                        <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                        <a href="#" class="hover:text-white transition-colors">Cookies</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modal for adding notes (Optional, kept from original logic) -->
+    <div id="modal-add-note"
+        class="modal-overlay fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm @(_showModal ? "" : "hidden")">
+        <div class="bg-white w-full max-w-lg rounded-3xl border border-slate-200 p-8 fade-in shadow-2xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-slate-800">เพิ่มบันทึกข้อมูลสำคัญ</h3>
+                <button @onclick="CloseModal" class="text-slate-400 hover:text-slate-600 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <form class="space-y-4" @onclick:stopPropagation="true" @onsubmit="SaveNote">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">ชื่อบันทึก</label>
+                    <input type="text" placeholder="เช่น รหัสผ่านตู้เซฟ, เลขบัญชีธนาคาร"
+                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-600 transition-colors">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">หมวดหมู่</label>
+                    <select
+                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-600 transition-colors">
+                        <option>รหัส PIN / รหัสผ่าน</option>
+                        <option>ข้อมูลการเงิน / ธนาคาร</option>
+                        <option>เอกสารระบุตัวตน</option>
+                        <option>มรดกดิจิทัล / โซเชียล</option>
+                        <option>ประวัติสุขภาพ</option>
+                        <option>พินัยกรรม / คำสั่งเสีย</option>
+                        <option>อื่นๆ</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">ข้อมูลสำคัญ (จะถูกเข้ารหัส)</label>
+                    <textarea rows="3" placeholder="ระบุเลขรหัส หรือข้อความสำคัญ..."
+                        class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-600 transition-colors"></textarea>
+                </div>
+                <div class="pt-4 flex gap-3">
+                    <button type="button" @onclick="CloseModal"
+                        class="flex-1 py-3 border border-slate-200 text-slate-600 font-semibold rounded-xl hover:bg-slate-50 transition-colors">
+                        ยกเลิก
+                    </button>
+                    <button type="submit"
+                        class="flex-1 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-100 active:scale-95 transition-all">
+                        บันทึกข้อมูล
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</CascadingValue>

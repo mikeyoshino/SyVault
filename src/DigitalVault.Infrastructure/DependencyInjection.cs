@@ -16,8 +16,6 @@ public static class DependencyInjection
         // Register services
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
-        services.AddScoped<IDeadManSwitchJobService, DeadManSwitchJobService>();
-        services.AddScoped<IMfaService, MfaService>();
 
         return services;
     }

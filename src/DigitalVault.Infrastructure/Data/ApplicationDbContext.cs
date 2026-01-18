@@ -12,13 +12,14 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     }
 
     public DbSet<User> Users => Set<User>();
-    public DbSet<VaultEntry> VaultEntries => Set<VaultEntry>();
-    public DbSet<Heir> Heirs => Set<Heir>();
-    public DbSet<HeirVaultAccess> HeirVaultAccesses => Set<HeirVaultAccess>();
-    public DbSet<DeadManSwitch> DeadManSwitches => Set<DeadManSwitch>();
-    public DbSet<SwitchCheckIn> SwitchCheckIns => Set<SwitchCheckIn>();
-    public DbSet<SwitchNotification> SwitchNotifications => Set<SwitchNotification>();
-    public DbSet<HeirAccessLog> HeirAccessLogs => Set<HeirAccessLog>();
+    public DbSet<Account> Accounts => Set<Account>();
+    public DbSet<FamilyMember> FamilyMembers => Set<FamilyMember>();
+    public DbSet<Document> Documents => Set<Document>();
+    public DbSet<DocumentMetadata> DocumentMetadata => Set<DocumentMetadata>();
+    public DbSet<FileAttachment> FileAttachments => Set<FileAttachment>();
+    public DbSet<Note> Notes => Set<Note>();
+    public DbSet<AccountCollaborator> AccountCollaborators => Set<AccountCollaborator>();
+    public DbSet<UserKeyPair> UserKeyPairs => Set<UserKeyPair>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 

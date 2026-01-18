@@ -86,33 +86,92 @@ public class SecureStorageService
     }
 
     // Zero-knowledge encryption methods
-    // NOTE: Auth tokens now stored in httpOnly cookies (managed by browser)
-    // Only master key remains in sessionStorage for client-side encryption
+    // Master Key is NEVER stored in plaintext
+    // Only encrypted version persists in localStorage
 
-    public async Task SaveMasterKeyAsync(string masterKey)
+    /// <summary>
+    /// Save encrypted Master Key to localStorage (persistent, survives refresh)
+    /// </summary>
+    public async Task SaveEncryptedMasterKeyAsync(string encryptedMasterKey, byte[] salt)
     {
-        // CRITICAL: Master key should ONLY be stored in session storage (cleared on close)
-        // NEVER store in local storage (would persist to disk)
-        await SetSessionItemAsync("masterKey", masterKey);
+        var data = new EncryptedKeyData
+        {
+            EncryptedKey = encryptedMasterKey,
+            Salt = Convert.ToBase64String(salt)
+        };
+        await SetLocalItemAsync("encryptedMasterKey", data);
     }
 
+    /// <summary>
+    /// Get encrypted Master Key from localStorage
+    /// </summary>
+    public async Task<EncryptedKeyData?> GetEncryptedMasterKeyAsync()
+    {
+        return await GetLocalItemAsync<EncryptedKeyData>("encryptedMasterKey");
+    }
+
+    /// <summary>
+    /// Save decrypted Master Key to sessionStorage ONLY (cleared on browser close/refresh)
+    /// </summary>
+    public async Task SaveMasterKeyAsync(string masterKey)
+    {
+        // ONLY save to sessionStorage (temporary, in-memory)
+        // NEVER save plaintext key to localStorage
+        Console.WriteLine($"💾 Saving Master Key to sessionStorage (length: {masterKey?.Length ?? 0})");
+        await SetSessionItemAsync("masterKey", masterKey);
+        Console.WriteLine("✅ Master Key saved to sessionStorage");
+    }
+
+    /// <summary>
+    /// Get decrypted Master Key from sessionStorage
+    /// Returns null if vault is locked (requires password to unlock)
+    /// </summary>
     public async Task<string?> GetMasterKeyAsync()
     {
-        // Check SessionStorage first (Temp session)
+        // Only check sessionStorage (temporary session)
+        // If not found, vault is locked - user must unlock with password
+        Console.WriteLine("🔍 Checking for Master Key in sessionStorage...");
         var key = await GetSessionItemAsync<string>("masterKey");
-        if (!string.IsNullOrEmpty(key)) return key;
 
-        // Fallback to LocalStorage (Persistent session)
-        return await GetLocalItemAsync<string>("masterKey");
+        if (string.IsNullOrEmpty(key))
+        {
+            Console.WriteLine("❌ Master Key NOT found in sessionStorage - Vault is LOCKED");
+        }
+        else
+        {
+            Console.WriteLine($"✅ Master Key found in sessionStorage (length: {key.Length})");
+        }
+
+        return key;
+    }
+
+    /// <summary>
+    /// Check if vault is locked (Master Key not in session)
+    /// </summary>
+    public async Task<bool> IsVaultLockedAsync()
+    {
+        var masterKey = await GetMasterKeyAsync();
+        return string.IsNullOrEmpty(masterKey);
     }
 
     public async Task ClearAuthDataAsync()
     {
-        // Clear from both locations to ensure complete logout
+        // Clear decrypted Master Key from session
         await RemoveSessionItemAsync("masterKey");
-        await RemoveLocalItemAsync("masterKey");
+
+        // Clear encrypted Master Key from localStorage
+        await RemoveLocalItemAsync("encryptedMasterKey");
 
         await RemoveSessionItemAsync("userInfo");
         await RemoveLocalItemAsync("userInfo");
     }
+}
+
+/// <summary>
+/// Data structure for encrypted Master Key storage
+/// </summary>
+public class EncryptedKeyData
+{
+    public string EncryptedKey { get; set; } = string.Empty;
+    public string Salt { get; set; } = string.Empty; // Base64 encoded
 }

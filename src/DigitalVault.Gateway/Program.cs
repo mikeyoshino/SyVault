@@ -60,7 +60,11 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+// Only use HTTPS redirection in production (disabled for dev to allow HTTP access with HTTP-only MinIO)
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 app.UseRouting();
 
 // Log all incoming requests (before authentication)

@@ -5,6 +5,10 @@ using DigitalVault.Domain.Entities;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using DigitalVault.Infrastructure.Data;
+using Microsoft.Extensions.Options;
+using DigitalVault.Infrastructure.Configuration;
+using DigitalVault.Logic.Services;
+using DigitalVault.Shared.DTOs.Documents;
 
 namespace DigitalVault.API.Controllers;
 
@@ -13,51 +17,48 @@ namespace DigitalVault.API.Controllers;
 [Route("api/[controller]")]
 public class DocumentsController : ControllerBase
 {
-    private readonly IStorageService _storageService;
-    private readonly ApplicationDbContext _context;
+    private readonly DocumentService _documentService;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<DocumentsController> _logger;
+    private readonly AwsSettings _awsSettings;
 
     public DocumentsController(
-        IStorageService storageService,
-        ApplicationDbContext context,
-        ILogger<DocumentsController> logger)
+        DocumentService documentService,
+        IUnitOfWork unitOfWork,
+        ILogger<DocumentsController> logger,
+        IOptions<AwsSettings> awsSettings)
     {
-        _storageService = storageService;
-        _context = context;
+        _documentService = documentService;
+        _unitOfWork = unitOfWork;
         _logger = logger;
+        _awsSettings = awsSettings.Value;
     }
 
     [HttpPost("presigned-url/upload")]
     public async Task<ActionResult<object>> GetUploadUrl([FromBody] UploadRequest request)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        // Helper: Validate user owns the family member (omitted for brevity, should retain in production)
+        // For upload URL, we might just need UserId if using S3 paths like /userId/...
+        // But let's act robustly.
+        var userId = GetCurrentUserId();
+        var (uploadUrl, objectKey) = await _documentService.GenerateUploadUrlAsync(request.ContentType, userId);
 
-        var objectKey = $"accounts/{userId}/documents/{Guid.NewGuid()}.enc";
-
-        // Generate URL (valid for 15 minutes)
-        var url = await _storageService.GenerateUploadPresignedUrlAsync(
-            objectKey,
-            request.ContentType,
-            TimeSpan.FromMinutes(15));
-
-        return Ok(new { UploadUrl = url, ObjectKey = objectKey });
+        return Ok(new { UploadUrl = uploadUrl, ObjectKey = objectKey });
     }
 
     [HttpPost]
-    public async Task<ActionResult<Document>> CreateDocument([FromBody] DocumentDto request)
+    public async Task<ActionResult<Document>> CreateDocument([FromBody] DigitalVault.Shared.DTOs.Documents.DocumentDto request)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userId == null) return Unauthorized();
+        var accountId = await GetAccountIdForUserAsync();
 
         var document = new Document
         {
             FamilyMemberId = request.FamilyMemberId,
-            AccountId = Guid.Parse(User.FindFirst("AccountId")?.Value ?? Guid.Empty.ToString()), // Assuming AccountId is in claims or passed
+            AccountId = accountId,
+
             DocumentType = request.DocumentType,
-            S3BucketName = "digital-vault-documents-local", // Should come from config
+            S3BucketName = _awsSettings.BucketName,
             S3ObjectKey = request.S3ObjectKey,
-            S3Region = "us-east-1",
+            S3Region = _awsSettings.Region,
 
             EncryptedOriginalFileName = request.EncryptedOriginalFileName,
             EncryptedFileExtension = request.EncryptedFileExtension,
@@ -70,22 +71,156 @@ public class DocumentsController : ControllerBase
             UploadedAt = DateTime.UtcNow
         };
 
-        // If AccountId claim is missing, we might need to fetch it or require it in DTO
-        // For now, let's assume valid user context context
+        await _documentService.CreateDocumentAsync(document);
 
-        _context.Documents.Add(document);
-        await _context.SaveChangesAsync();
+        // Return DTO instead of entity to avoid circular reference
+        var dto = new DocumentDto
+        {
+            Id = document.Id,
+            FamilyMemberId = document.FamilyMemberId,
+            DocumentType = document.DocumentType,
+            S3ObjectKey = document.S3ObjectKey,
+            EncryptedOriginalFileName = document.EncryptedOriginalFileName,
+            EncryptedFileExtension = document.EncryptedFileExtension,
+            EncryptedFileSize = document.EncryptedFileSize,
+            EncryptedMimeType = document.EncryptedMimeType,
+            EncryptionIV = document.EncryptionIV,
+            EncryptionTag = document.EncryptionTag,
+            UploadedAt = document.UploadedAt
+        };
 
-        return CreatedAtAction(nameof(GetDocument), new { id = document.Id }, document);
+        return CreatedAtAction(nameof(GetDocument), new { id = document.Id }, dto);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<ActionResult<Document>> GetDocument(Guid id)
     {
-        var document = await _context.Documents.FindAsync(id);
+        var document = await _documentService.GetDocumentAsync(id);
         if (document == null) return NotFound();
 
+        // Security check: Ensure document belongs to user's account
+        var accountId = await GetAccountIdForUserAsync();
+        if (document.AccountId != accountId)
+        {
+            return Forbid();
+        }
+
         return document;
+    }
+
+    [HttpGet("family/{familyMemberId}")]
+    public async Task<ActionResult<IEnumerable<DigitalVault.Shared.DTOs.Documents.DocumentDto>>> GetDocumentsByFamilyMember(Guid familyMemberId)
+    {
+        var accountId = await GetAccountIdForUserAsync();
+        var documents = await _documentService.GetDocumentsByFamilyMemberAsync(familyMemberId, accountId);
+
+        // Map Entities to DTOs
+        var dtos = documents.Select(d => new DigitalVault.Shared.DTOs.Documents.DocumentDto
+        {
+            Id = d.Id,
+            FamilyMemberId = d.FamilyMemberId,
+            DocumentType = d.DocumentType,
+            S3ObjectKey = d.S3ObjectKey,
+            UploadedAt = d.UploadedAt,
+            EncryptedOriginalFileName = d.EncryptedOriginalFileName,
+            EncryptedFileExtension = d.EncryptedFileExtension,
+            EncryptedFileSize = d.EncryptedFileSize,
+            EncryptedMimeType = d.EncryptedMimeType,
+            EncryptionIV = d.EncryptionIV,
+            EncryptionTag = d.EncryptionTag
+        });
+
+        return Ok(dtos);
+    }
+
+    [HttpGet("{id}/preview-url")]
+    public async Task<ActionResult<object>> GetPreviewUrl(Guid id)
+    {
+        try
+        {
+            var accountId = await GetAccountIdForUserAsync();
+            var url = await _documentService.GeneratePreviewUrlAsync(id, accountId);
+            return Ok(new { Url = url });
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteDocument(Guid id)
+    {
+        try
+        {
+            var accountId = await GetAccountIdForUserAsync();
+            await _documentService.DeleteDocumentAsync(id, accountId);
+            return NoContent();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+    }
+
+    private Guid GetCurrentUserId()
+    {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                          ?? User.FindFirst("sub")?.Value
+                          ?? User.FindFirst("userId")?.Value;
+
+        if (Guid.TryParse(userIdClaim, out var userId))
+        {
+            return userId;
+        }
+
+        throw new UnauthorizedAccessException("User ID not found in token");
+    }
+
+    private async Task<Guid> GetAccountIdForUserAsync()
+    {
+        var userId = GetCurrentUserId();
+
+        // Look up account via UnitOfWork
+        var accounts = await _unitOfWork.Accounts.FindAsync(a => a.UserId == userId);
+        var account = accounts.OrderByDescending(a => a.IsDefault).FirstOrDefault();
+
+        if (account != null)
+        {
+            return account.Id;
+        }
+
+        // If no account exists, we could Create one here or throw.
+        // Since FamilyMembers controller creates it on load, it SHOULD exist.
+        // But for safety, let's create it if missing (Auto-heal).
+
+        _logger.LogInformation("No account found for user {UserId} in Documents controller. Creating one.", userId);
+
+        var newAccount = new Account
+        {
+            Id = Guid.NewGuid(),
+            UserId = userId,
+            EncryptedAccountName = "My Vault",
+            IsDefault = true,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+            EncryptedMasterKey = "",
+            MasterKeySalt = "",
+            AuthenticationTag = ""
+        };
+
+        await _unitOfWork.Accounts.AddAsync(newAccount);
+        await _unitOfWork.CompleteAsync();
+
+        return newAccount.Id;
     }
 }
 
@@ -93,17 +228,4 @@ public class UploadRequest
 {
     public string FileName { get; set; } = string.Empty;
     public string ContentType { get; set; } = string.Empty;
-}
-
-public class DocumentDto
-{
-    public Guid FamilyMemberId { get; set; }
-    public string DocumentType { get; set; } = string.Empty;
-    public string S3ObjectKey { get; set; } = string.Empty;
-    public string EncryptedOriginalFileName { get; set; } = string.Empty;
-    public string EncryptedFileExtension { get; set; } = string.Empty;
-    public string EncryptedFileSize { get; set; } = string.Empty;
-    public string EncryptedMimeType { get; set; } = string.Empty;
-    public string EncryptionIV { get; set; } = string.Empty;
-    public string EncryptionTag { get; set; } = string.Empty;
 }

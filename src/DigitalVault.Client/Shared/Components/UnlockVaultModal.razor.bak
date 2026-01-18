@@ -1,0 +1,137 @@
+@using MudBlazor
+@using DigitalVault.Client.Services
+@inject VaultUnlockService VaultUnlockService
+@inject ISnackbar Snackbar
+
+<MudDialog>
+    <DialogContent>
+        <div class="pa-4">
+            <div class="d-flex align-center mb-4">
+                <MudIcon Icon="@Icons.Material.Filled.Lock" Size="Size.Large" Color="Color.Primary" Class="mr-3" />
+                <div>
+                    <MudText Typo="Typo.h6">Unlock Your Vault</MudText>
+                    <MudText Typo="Typo.body2" Color="Color.Secondary">
+                        Enter your password to decrypt your files
+                    </MudText>
+                </div>
+            </div>
+
+            <MudTextField @bind-Value="_password" Label="Password" Variant="Variant.Outlined"
+                InputType="@_passwordInputType" Adornment="Adornment.End" AdornmentIcon="@_passwordIcon"
+                OnAdornmentClick="TogglePasswordVisibility" Immediate="true" FullWidth="true" Class="mb-3"
+                OnKeyDown="HandleKeyDown" @ref="_passwordField" />
+
+            @if (!string.IsNullOrEmpty(_errorMessage))
+            {
+                <MudAlert Severity="Severity.Error" Class="mb-3">@_errorMessage</MudAlert>
+            }
+
+            <MudText Typo="Typo.caption" Color="Color.Secondary">
+                <MudIcon Icon="@Icons.Material.Filled.Info" Size="Size.Small" Class="mr-1" />
+                Your password never leaves your device and is used only to decrypt your encryption key
+            </MudText>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" Variant="Variant.Text">Cancel</MudButton>
+        <MudButton OnClick="Unlock" Variant="Variant.Filled" Color="Color.Primary" Disabled="@_isUnlocking">
+            @if (_isUnlocking)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+                <span>Unlocking...</span>
+            }
+            else
+            {
+                <span>Unlock Vault</span>
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] IDialogReference MudDialog { get; set; } = null!;
+
+    private string _password = string.Empty;
+    private string? _errorMessage;
+    private bool _isUnlocking = false;
+    private bool _passwordVisible = false;
+    private InputType _passwordInputType = InputType.Password;
+    private string _passwordIcon = Icons.Material.Filled.VisibilityOff;
+    private MudTextField<string>? _passwordField;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && _passwordField != null)
+        {
+            // Auto-focus password field
+            await _passwordField.FocusAsync();
+        }
+    }
+
+    private void TogglePasswordVisibility()
+    {
+        if (_passwordVisible)
+        {
+            _passwordVisible = false;
+            _passwordInputType = InputType.Password;
+            _passwordIcon = Icons.Material.Filled.VisibilityOff;
+        }
+        else
+        {
+            _passwordVisible = true;
+            _passwordInputType = InputType.Text;
+            _passwordIcon = Icons.Material.Filled.Visibility;
+        }
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && !_isUnlocking)
+        {
+            await Unlock();
+        }
+    }
+
+    private async Task Unlock()
+    {
+        if (string.IsNullOrWhiteSpace(_password))
+        {
+            _errorMessage = "Please enter your password";
+            return;
+        }
+
+        _isUnlocking = true;
+        _errorMessage = null;
+        StateHasChanged();
+
+        try
+        {
+            var result = await VaultUnlockService.UnlockVaultAsync(_password);
+
+            if (result.Success)
+            {
+                Snackbar.Add("Vault unlocked successfully!", Severity.Success);
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+            else
+            {
+                _errorMessage = result.ErrorMessage ?? "Unlock failed";
+                _password = string.Empty; // Clear password on failure
+            }
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Error: {ex.Message}";
+        }
+        finally
+        {
+            _isUnlocking = false;
+            StateHasChanged();
+        }
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Close(DialogResult.Cancel());
+    }
+}

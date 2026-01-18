@@ -1,7 +1,8 @@
 using Amazon.S3;
 using Amazon.S3.Model;
 using DigitalVault.Application.Interfaces;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using DigitalVault.Infrastructure.Configuration;
 
 namespace DigitalVault.Infrastructure.Services;
 
@@ -10,10 +11,10 @@ public class S3Service : IStorageService
     private readonly IAmazonS3 _s3Client;
     private readonly string _bucketName;
 
-    public S3Service(IAmazonS3 s3Client, IConfiguration configuration)
+    public S3Service(IAmazonS3 s3Client, IOptions<AwsSettings> settings)
     {
         _s3Client = s3Client;
-        _bucketName = configuration["AWS:BucketName"] ?? "digital-vault-documents-local";
+        _bucketName = settings.Value.BucketName;
     }
 
     public Task<string> GenerateUploadPresignedUrlAsync(string objectKey, string contentType, TimeSpan expiry)
@@ -24,11 +25,12 @@ public class S3Service : IStorageService
             Key = objectKey,
             Verb = HttpVerb.PUT,
             Expires = DateTime.UtcNow.Add(expiry),
-            ContentType = contentType
+            ContentType = contentType,
+            Protocol = Protocol.HTTP // CRITICAL: Force HTTP for MinIO
         };
 
-        // Enforce server-side encryption
-        request.Headers["x-amz-server-side-encryption"] = "AES256";
+        // Note: Server-side encryption removed for MinIO compatibility in dev
+        // request.Headers["x-amz-server-side-encryption"] = "AES256";
 
         return _s3Client.GetPreSignedURLAsync(request);
     }
@@ -40,7 +42,8 @@ public class S3Service : IStorageService
             BucketName = _bucketName,
             Key = objectKey,
             Verb = HttpVerb.GET,
-            Expires = DateTime.UtcNow.Add(expiry)
+            Expires = DateTime.UtcNow.Add(expiry),
+            Protocol = Protocol.HTTP // Force HTTP for MinIO
         };
 
         return _s3Client.GetPreSignedURLAsync(request);

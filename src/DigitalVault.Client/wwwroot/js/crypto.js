@@ -182,13 +182,12 @@ window.cryptoHelper = {
             new Uint8Array(dataArray)
         );
 
-        // Return object with explicit IV and Data for flexible handling
-        // Convert to standard arrays for Blazor interoperability
+        // Return as base64 strings for proper C# deserialization
+        // Blazor can't deserialize JavaScript arrays directly to byte[]
         return {
-            iv: Array.from(iv),
-            encryptedData: Array.from(new Uint8Array(encrypted)),
-            tag: [] // GCM tag is appended to ciphertext in Web Crypto, so usually we handle it together or separate if needed. 
-            // Note: Web Crypto AES-GCM appends tag at end of ciphertext automatically.
+            iv: btoa(String.fromCharCode(...iv)),
+            encryptedData: btoa(String.fromCharCode(...new Uint8Array(encrypted))),
+            tag: "" // GCM tag is appended to ciphertext automatically
         };
     },
 
@@ -225,6 +224,40 @@ window.cryptoHelper = {
         } catch (error) {
             console.error('Data decryption failed:', error);
             throw new Error('ไม่สามารถถอดรหัสข้อมูลได้');
+        }
+    },
+
+    // Decrypt binary data (for files)
+    decryptBytes: async function (encryptedDataArray, ivBase64, masterKeyBase64) {
+        try {
+            // Import master key
+            const keyData = Uint8Array.from(atob(masterKeyBase64), c => c.charCodeAt(0));
+            const cryptoKey = await crypto.subtle.importKey(
+                'raw',
+                keyData,
+                'AES-GCM',
+                false,
+                ['decrypt']
+            );
+
+            // Decode IV from base64
+            const iv = Uint8Array.from(atob(ivBase64), c => c.charCodeAt(0));
+
+            // Convert array to Uint8Array
+            const encryptedData = new Uint8Array(encryptedDataArray);
+
+            // Decrypt
+            const decrypted = await crypto.subtle.decrypt(
+                { name: 'AES-GCM', iv: iv },
+                cryptoKey,
+                encryptedData
+            );
+
+            // Return as base64 string for C# deserialization
+            return btoa(String.fromCharCode(...new Uint8Array(decrypted)));
+        } catch (error) {
+            console.error('❌ Decryption error:', error);
+            throw error;
         }
     },
 

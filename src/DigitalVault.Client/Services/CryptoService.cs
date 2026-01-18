@@ -110,17 +110,34 @@ public class CryptoService
     /// </summary>
     public async Task<EncryptionResult> EncryptBytesAsync(byte[] data, string masterKey)
     {
+        // Pass byte array directly - Blazor's JS interop automatically serializes byte[] to JavaScript array
+
         return await _jsRuntime.InvokeAsync<EncryptionResult>(
             "cryptoHelper.encryptBytes",
             data,
             masterKey
         );
     }
+
+    /// <summary>
+    /// Decrypt binary data (file) with master key and IV
+    /// </summary>
+    public async Task<byte[]> DecryptBytesAsync(byte[] encryptedData, string ivBase64, string masterKey)
+    {
+        var decryptedBase64 = await _jsRuntime.InvokeAsync<string>(
+            "cryptoHelper.decryptBytes",
+            encryptedData,
+            ivBase64,
+            masterKey
+        );
+
+        return Convert.FromBase64String(decryptedBase64);
+    }
 }
 
 public class EncryptionResult
 {
-    public byte[] Iv { get; set; } = Array.Empty<byte>();
-    public byte[] EncryptedData { get; set; } = Array.Empty<byte>();
-    public byte[] Tag { get; set; } = Array.Empty<byte>(); // Not used directly if GCM appends it
+    public string Iv { get; set; } = string.Empty; // Base64 string from JavaScript
+    public string EncryptedData { get; set; } = string.Empty; // Base64 string from JavaScript
+    public string Tag { get; set; } = string.Empty; // Not used (GCM appends tag to ciphertext)
 }

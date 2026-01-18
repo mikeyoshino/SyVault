@@ -8,10 +8,15 @@ using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens.Jwt;
 using Amazon.S3;
 using DigitalVault.Infrastructure.Services;
+using DigitalVault.Infrastructure.Repositories;
+using DigitalVault.Logic.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,15 +65,71 @@ builder.Services.AddHangfireServer(options =>
     options.WorkerCount = 1; // Single worker for development
 });
 
-// Configure AWS S3
+builder.Services.Configure<DigitalVault.Infrastructure.Configuration.AwsSettings>(builder.Configuration.GetSection("AWS"));
 var awsOptions = builder.Configuration.GetAWSOptions("AWS");
-builder.Services.AddDefaultAWSOptions(awsOptions);
-builder.Services.AddAWSService<IAmazonS3>();
+
+// MinIO / Custom Endpoint Support: Explicitly set credentials if provided in config
+var awsConfigSection = builder.Configuration.GetSection("AWS");
+var awsAccessKey = awsConfigSection["AccessKey"];
+var awsSecretKey = awsConfigSection["SecretKey"];
+var serviceUrl = awsConfigSection["ServiceURL"];
+
+if (!string.IsNullOrEmpty(awsAccessKey) && !string.IsNullOrEmpty(awsSecretKey))
+{
+    awsOptions.Credentials = new Amazon.Runtime.BasicAWSCredentials(awsAccessKey, awsSecretKey);
+}
+
+// Force ServiceURL if present (crucial for MinIO)
+if (!string.IsNullOrEmpty(serviceUrl))
+{
+    // awsOptions.Config // Config is internal/protected in some versions, but mapped via json usually.
+    // However, if automatic mapping fails, we might need to rely on the library.
+    // But usually GetAWSOptions handles ServiceURL if it's in the JSON.
+    // The main issue was likely Credentials.
+}
+
+// Configure S3 client manually for MinIO HTTP support
+var forcePathStyle = awsConfigSection.GetValue<bool>("ForcePathStyle", true);
+var region = awsConfigSection["Region"] ?? "us-east-1";
+
+builder.Services.AddSingleton<IAmazonS3>(sp =>
+{
+    var config = new Amazon.S3.AmazonS3Config
+    {
+        RegionEndpoint = Amazon.RegionEndpoint.GetBySystemName(region),
+        ForcePathStyle = forcePathStyle,
+        UseHttp = true // CRITICAL: Use HTTP for local MinIO
+    };
+
+    if (!string.IsNullOrEmpty(serviceUrl))
+    {
+        // Ensure protocol is included
+        if (!serviceUrl.StartsWith("http://") && !serviceUrl.StartsWith("https://"))
+        {
+            serviceUrl = "http://" + serviceUrl;
+        }
+        config.ServiceURL = serviceUrl;
+    }
+
+    if (!string.IsNullOrEmpty(awsAccessKey) && !string.IsNullOrEmpty(awsSecretKey))
+    {
+        var credentials = new Amazon.Runtime.BasicAWSCredentials(awsAccessKey, awsSecretKey);
+        return new Amazon.S3.AmazonS3Client(credentials, config);
+    }
+
+    return new Amazon.S3.AmazonS3Client(config);
+});
 builder.Services.AddScoped<IStorageService, S3Service>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<DocumentService>();
+builder.Services.AddScoped<FamilyMemberService>();
 
 // Configure JWT Authentication
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not configured");
+
+// Clear default claim mapping to preserve original claim names (e.g. "AccountId")
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -78,6 +139,7 @@ builder.Services.AddAuthentication(options =>
 .AddJwtBearer(options =>
 {
     // Read token from cookie first, fallback to Authorization header
+    options.MapInboundClaims = false; // Disable default mapping to preserve custom claims (account_id)
     options.Events = new JwtBearerEvents
     {
         OnMessageReceived = context =>
@@ -266,3 +328,5 @@ RecurringJob.AddOrUpdate<ITokenService>(
 app.Logger.LogInformation("Hangfire recurring jobs scheduled successfully");
 
 app.Run();
+
+public partial class Program { }

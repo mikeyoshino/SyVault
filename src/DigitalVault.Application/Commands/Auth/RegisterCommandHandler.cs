@@ -48,10 +48,26 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, AuthRespo
         };
 
         _context.Users.Add(user);
+
+        // Create default account
+        var account = new Account
+        {
+            UserId = user.Id,
+            EncryptedAccountName = "My Vault", // Placeholder
+            IsDefault = true,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+            // Initialize with empty encryption fields for now
+            EncryptedMasterKey = "",
+            MasterKeySalt = "",
+            AuthenticationTag = ""
+        };
+        _context.Accounts.Add(account);
+
         await _context.SaveChangesAsync(cancellationToken);
 
         // Generate tokens
-        var accessToken = _tokenService.GenerateAccessToken(user);
+        var accessToken = _tokenService.GenerateAccessToken(user, account.Id);
         var refreshToken = _tokenService.GenerateRefreshToken();
 
         // Store refresh token

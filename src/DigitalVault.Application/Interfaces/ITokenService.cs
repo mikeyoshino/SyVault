@@ -5,7 +5,7 @@ namespace DigitalVault.Application.Interfaces;
 public interface ITokenService
 {
     // Existing methods
-    string GenerateAccessToken(User user);
+    string GenerateAccessToken(User user, Guid? accountId = null);
     string GenerateRefreshToken();
     Guid? ValidateAccessToken(string token);
 

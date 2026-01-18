@@ -7,6 +7,7 @@ using DigitalVault.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Logging;
 
 namespace DigitalVault.Infrastructure.Services;
 
@@ -14,14 +15,16 @@ public class TokenService : ITokenService
 {
     private readonly IConfiguration _configuration;
     private readonly IApplicationDbContext _context;
+    private readonly ILogger<TokenService> _logger;
 
-    public TokenService(IConfiguration configuration, IApplicationDbContext context)
+    public TokenService(IConfiguration configuration, IApplicationDbContext context, ILogger<TokenService> logger)
     {
         _configuration = configuration;
         _context = context;
+        _logger = logger;
     }
 
-    public string GenerateAccessToken(User user)
+    public string GenerateAccessToken(User user, Guid? accountId = null)
     {
         var secretKey = _configuration["JwtSettings:SecretKey"]
             ?? throw new InvalidOperationException("JWT Secret Key not configured");
@@ -29,13 +32,26 @@ public class TokenService : ITokenService
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        var claims = new[]
+        var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim("userId", user.Id.ToString())
         };
+
+        if (accountId.HasValue)
+        {
+            _logger.LogInformation("Adding AccountId claim to token: {AccountId}", accountId.Value);
+            // Use standard snake_case for claims to avoid mapping issues
+            claims.Add(new Claim("account_id", accountId.Value.ToString()));
+            // Add legacy PascalCase just in case, but prefer snake_case
+            claims.Add(new Claim("AccountId", accountId.Value.ToString()));
+        }
+        else
+        {
+            _logger.LogWarning("No AccountId provided for token generation.");
+        }
 
         var expirationMinutes = int.Parse(_configuration["JwtSettings:ExpirationMinutes"] ?? "60");
 
@@ -148,8 +164,14 @@ public class TokenService : ITokenService
     public async Task<(string NewAccessToken, string NewRefreshToken)> RotateRefreshTokenAsync(
         RefreshToken oldToken)
     {
+        // Fetch User's Account to include AccountId in the new token
+        var account = await _context.Accounts
+            .Where(a => a.UserId == oldToken.UserId)
+            .OrderByDescending(a => a.IsDefault)
+            .FirstOrDefaultAsync();
+
         // Generate new tokens
-        var newAccessToken = GenerateAccessToken(oldToken.User);
+        var newAccessToken = GenerateAccessToken(oldToken.User, account?.Id);
         var newRefreshToken = GenerateRefreshToken();
 
         // Store new refresh token

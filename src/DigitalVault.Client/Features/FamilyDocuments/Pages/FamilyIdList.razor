@@ -1,8 +1,11 @@
 @page "/familyid"
 @attribute [Microsoft.AspNetCore.Authorization.Authorize]
 @using DigitalVault.Client.Shared.Layouts
+@using DigitalVault.Client.Services
+@using DigitalVault.Shared.DTOs.FamilyMembers
 @layout DashboardLayout
 @inject NavigationManager Navigation
+@inject FamilyMemberService FamilyMemberService
 
 <PageTitle>Family IDs - Trustworthy</PageTitle>
 
@@ -23,24 +26,27 @@
     <div>
         <h2 class="text-sm font-semibold text-slate-600 mb-4">People</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <!-- Existing Member Card -->
-            <div class="bg-white rounded-2xl p-6 border border-slate-200 hover:shadow-lg transition-all cursor-pointer group"
-                @onclick="@(() => Navigation.NavigateTo("/familyid/person/1"))">
-                <div class="flex items-center gap-4 mb-4">
-                    <div
-                        class="w-12 h-12 bg-amber-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                        SY
+            @foreach (var member in _members)
+            {
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 hover:shadow-lg transition-all cursor-pointer group"
+                    @onclick="@(() => Navigation.NavigateTo($"/familyid/person/{member.Id}"))">
+                    <div class="flex items-center gap-4 mb-4">
+                        <div
+                            class="@(member.AvatarColor ?? "bg-amber-500") w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                            @(member.InitialsPlainText ?? "FM")
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800">@(member.EncryptedFirstName) @(member.EncryptedLastName)
+                            </h3>
+                            <p class="text-sm text-slate-500">Owner</p>
+                        </div>
                     </div>
-                    <div>
-                        <h3 class="font-bold text-slate-800">Supakorn Yoshino</h3>
-                        <p class="text-sm text-slate-500">Owner</p>
+                    <div class="flex items-center text-sm text-blue-600 font-medium">
+                        <i class="fas fa-file-alt mr-2"></i>
+                        <span>View Items</span>
                     </div>
                 </div>
-                <div class="flex items-center text-sm text-blue-600 font-medium">
-                    <i class="fas fa-file-alt mr-2"></i>
-                    <span>8 items</span>
-                </div>
-            </div>
+            }
 
             <!-- Add New Member Card -->
             <div class="bg-white rounded-2xl p-6 border-2 border-dashed border-slate-300 hover:border-blue-400 hover:bg-blue-50/50 transition-all cursor-pointer group"
@@ -151,6 +157,12 @@
 
 @code {
     private bool _showAddMemberModal = false;
+    private List<FamilyMemberDto> _members = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _members = await FamilyMemberService.GetFamilyMembersAsync();
+    }
 
     private void OpenAddMemberModal()
     {

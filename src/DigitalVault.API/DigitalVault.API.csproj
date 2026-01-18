@@ -24,6 +24,7 @@
     <ProjectReference Include="..\DigitalVault.Application\DigitalVault.Application.csproj" />
     <ProjectReference Include="..\DigitalVault.Infrastructure\DigitalVault.Infrastructure.csproj" />
     <ProjectReference Include="..\DigitalVault.Shared\DigitalVault.Shared.csproj" />
+    <ProjectReference Include="..\DigitalVault.Logic\DigitalVault.Logic.csproj" />
   </ItemGroup>
 
 </Project>

@@ -53,11 +53,29 @@
             }
         },
         {
+            "label": "build-landing",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/src/DigitalVault.LandingPage/DigitalVault.LandingPage.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": "build",
+            "presentation": {
+                "reveal": "silent",
+                "panel": "shared"
+            }
+        },
+        {
             "label": "build-all",
             "dependsOn": [
                 "build-api",
                 "build-gateway",
-                "build-client"
+                "build-client",
+                "build-landing"
             ],
             "group": {
                 "kind": "build",
@@ -117,6 +135,23 @@
             }
         },
         {
+            "label": "watch-landing",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "watch",
+                "run",
+                "--project",
+                "${workspaceFolder}/src/DigitalVault.LandingPage/DigitalVault.LandingPage.csproj"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            }
+        },
+        {
             "label": "clean-api",
             "command": "dotnet",
             "type": "process",
@@ -150,11 +185,23 @@
             "group": "build"
         },
         {
+            "label": "clean-landing",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "clean",
+                "${workspaceFolder}/src/DigitalVault.LandingPage/DigitalVault.LandingPage.csproj"
+            ],
+            "problemMatcher": "$msCompile",
+            "group": "build"
+        },
+        {
             "label": "clean-all",
             "dependsOn": [
                 "clean-api",
                 "clean-gateway",
-                "clean-client"
+                "clean-client",
+                "clean-landing"
             ],
             "group": "build",
             "problemMatcher": []
@@ -206,9 +253,152 @@
         {
             "label": "open-browser",
             "type": "shell",
-            "command": "sleep 3 && open http://localhost:5000",
+            "command": "sleep 3 && open http://localhost:5001",
             "presentation": {
                 "reveal": "never",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "docker-start-infrastructure",
+            "type": "shell",
+            "command": "docker-compose",
+            "args": [
+                "-f",
+                "${workspaceFolder}/docker/docker-compose.yml",
+                "up",
+                "-d"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "focus": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "docker-stop-infrastructure",
+            "type": "shell",
+            "command": "docker-compose",
+            "args": [
+                "-f",
+                "${workspaceFolder}/docker/docker-compose.yml",
+                "down"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "docker-restart-infrastructure",
+            "type": "shell",
+            "command": "docker-compose",
+            "args": [
+                "-f",
+                "${workspaceFolder}/docker/docker-compose.yml",
+                "restart"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "docker-logs",
+            "type": "shell",
+            "command": "docker-compose",
+            "args": [
+                "-f",
+                "${workspaceFolder}/docker/docker-compose.yml",
+                "logs",
+                "-f"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": [],
+            "isBackground": true
+        },
+        {
+            "label": "docker-status",
+            "type": "shell",
+            "command": "docker-compose",
+            "args": [
+                "-f",
+                "${workspaceFolder}/docker/docker-compose.yml",
+                "ps"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "database-reset",
+            "type": "shell",
+            "command": "docker",
+            "args": [
+                "exec",
+                "digitalvault-postgres",
+                "psql",
+                "-U",
+                "postgres",
+                "-c",
+                "DROP DATABASE IF EXISTS digitalvault; CREATE DATABASE digitalvault;"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "focus": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "database-migrate",
+            "type": "shell",
+            "command": "dotnet",
+            "args": [
+                "ef",
+                "database",
+                "update",
+                "--project",
+                "${workspaceFolder}/src/DigitalVault.API/DigitalVault.API.csproj",
+                "--no-build"
+            ],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "database-reset-and-migrate",
+            "dependsOn": [
+                "database-reset",
+                "database-migrate"
+            ],
+            "dependsOrder": "sequence",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "cleanup-and-build-all",
+            "dependsOn": [
+                "cleanup-before-launch",
+                "build-all"
+            ],
+            "dependsOrder": "sequence",
+            "presentation": {
+                "reveal": "silent",
                 "panel": "shared"
             },
             "problemMatcher": []

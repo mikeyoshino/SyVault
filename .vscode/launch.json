@@ -21,7 +21,7 @@
             "internalConsoleOptions": "neverOpen"
         },
         {
-            "name": "🌐 Gateway Server (Web)",
+            "name": "🌐 Gateway Server (Web) ⚠️ Needs Client Running",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build-gateway",
@@ -36,7 +36,7 @@
             },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
-                "ASPNETCORE_URLS": "http://localhost:5000"
+                "ASPNETCORE_URLS": "http://localhost:5001"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"
@@ -45,7 +45,7 @@
             "internalConsoleOptions": "neverOpen"
         },
         {
-            "name": "🎨 Client (Blazor WebAssembly)",
+            "name": "🎨 Client Standalone (Dev Server)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build-client",
@@ -57,41 +57,71 @@
             ],
             "cwd": "${workspaceFolder}/src/DigitalVault.Client",
             "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s"
+            },
             "console": "integratedTerminal",
             "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS": "http://localhost:5067"
             }
         },
         {
-            "name": "🎨 Client (Debug)",
+            "name": "🎨 Blazor WASM Debug (via Gateway)",
             "type": "blazorwasm",
             "request": "launch",
-            "preLaunchTask": "build-client",
             "cwd": "${workspaceFolder}/src/DigitalVault.Client",
             "browser": "chrome",
-            "url": "http://localhost:5000/auth",
+            "url": "http://localhost:5001",
             "timeout": 120000,
             "webRoot": "${workspaceFolder}/src/DigitalVault.Client",
             "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
-            "trace": true
+            "trace": true,
+            "hosted": true
         },
         {
             "name": "🔗 Attach to Client",
             "type": "blazorwasm",
             "request": "attach",
             "cwd": "${workspaceFolder}/src/DigitalVault.Client"
+        },
+        {
+            "name": "🏠 Landing Page",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build-landing",
+            "program": "${workspaceFolder}/src/DigitalVault.LandingPage/bin/Debug/net8.0/DigitalVault.LandingPage.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/DigitalVault.LandingPage",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+                "uriFormat": "%s"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development",
+                "ASPNETCORE_URLS": "http://localhost:5082"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            },
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
         }
     ],
     "compounds": [
         {
-            "name": "⚡ Full Stack (Gateway + API + Client)",
+            "name": "⚡ Full Stack (Servers Only)",
             "configurations": [
                 "🚀 API Server",
-                "🌐 Gateway Server (Web)",
-                "🎨 Client (Blazor WebAssembly)"
+                "🌐 Gateway Server (Web) ⚠️ Needs Client Running",
+                "🎨 Client Standalone (Dev Server)"
             ],
             "stopAll": true,
-            "preLaunchTask": "build-all",
+            "preLaunchTask": "cleanup-and-build-all",
             "presentation": {
                 "hidden": false,
                 "group": "fullstack",
@@ -100,16 +130,48 @@
             "postDebugTask": "kill-all-servers"
         },
         {
-            "name": "🔧 Legacy (API + Client Direct)",
+            "name": "🔍 Full Stack + Blazor Debug",
             "configurations": [
                 "🚀 API Server",
-                "🎨 Client (Blazor WebAssembly)"
+                "🌐 Gateway Server (Web) ⚠️ Needs Client Running",
+                "🎨 Client Standalone (Dev Server)",
+                "🎨 Blazor WASM Debug (via Gateway)"
             ],
             "stopAll": true,
+            "preLaunchTask": "cleanup-and-build-all",
             "presentation": {
                 "hidden": false,
-                "group": "legacy",
+                "group": "fullstack",
                 "order": 2
+            },
+            "postDebugTask": "kill-all-servers"
+        },
+        {
+            "name": "🔧 Gateway + Client (No API Debug)",
+            "configurations": [
+                "🌐 Gateway Server (Web) ⚠️ Needs Client Running",
+                "🎨 Client Standalone (Dev Server)"
+            ],
+            "stopAll": true,
+            "preLaunchTask": "cleanup-and-build-all",
+            "presentation": {
+                "hidden": false,
+                "group": "frontend",
+                "order": 3
+            },
+            "postDebugTask": "kill-all-servers"
+        },
+        {
+            "name": "🔧 API Only (Standalone)",
+            "configurations": [
+                "🚀 API Server"
+            ],
+            "stopAll": true,
+            "preLaunchTask": "build-api",
+            "presentation": {
+                "hidden": false,
+                "group": "backend",
+                "order": 4
             }
         }
     ]

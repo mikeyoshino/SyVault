@@ -2,16 +2,29 @@
 // All encryption/decryption happens client-side - server never sees plaintext keys
 
 window.cryptoHelper = {
+    // Helper function to convert Uint8Array/ArrayBuffer to base64 without stack overflow
+    // This avoids using spread operator which fails for large arrays (files > ~100KB)
+    arrayBufferToBase64: function(buffer) {
+        const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
+        let binary = '';
+        const chunkSize = 8192; // Process in chunks to avoid stack overflow
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+            const chunk = bytes.subarray(i, Math.min(i + chunkSize, bytes.length));
+            binary += String.fromCharCode.apply(null, chunk);
+        }
+        return btoa(binary);
+    },
+
     // Generate random 256-bit (32-byte) master encryption key
     generateMasterKey: function () {
         const masterKey = crypto.getRandomValues(new Uint8Array(32));
-        return btoa(String.fromCharCode(...masterKey));
+        return this.arrayBufferToBase64(masterKey);
     },
 
     // Generate random bytes
     generateRandomBytes: function (length) {
         const bytes = crypto.getRandomValues(new Uint8Array(length));
-        return btoa(String.fromCharCode(...bytes));
+        return this.arrayBufferToBase64(bytes);
     },
 
     // Derive 256-bit key from password using PBKDF2-SHA256
@@ -45,7 +58,7 @@ window.cryptoHelper = {
 
         // Export and return as base64 (for passing between JS calls)
         const exportedKey = await crypto.subtle.exportKey('raw', derivedKey);
-        return btoa(String.fromCharCode(...new Uint8Array(exportedKey)));
+        return this.arrayBufferToBase64(exportedKey);
     },
 
     // Encrypt master key with password-derived key (AES-256-GCM)
@@ -82,7 +95,7 @@ window.cryptoHelper = {
         combined.set(new Uint8Array(encrypted), iv.length);
 
         // Return as base64
-        return btoa(String.fromCharCode(...combined));
+        return this.arrayBufferToBase64(combined);
     },
 
     // Decrypt master key with password-derived key (AES-256-GCM)
@@ -114,7 +127,7 @@ window.cryptoHelper = {
             );
 
             // Return as base64
-            return btoa(String.fromCharCode(...new Uint8Array(decrypted)));
+            return this.arrayBufferToBase64(decrypted);
         } catch (error) {
             console.error('Decryption failed:', error);
             throw new Error('ไม่สามารถถอดรหัสได้ กรุณาตรวจสอบรหัสผ่าน');
@@ -154,7 +167,7 @@ window.cryptoHelper = {
         combined.set(iv);
         combined.set(new Uint8Array(encrypted), iv.length);
 
-        return btoa(String.fromCharCode(...combined));
+        return this.arrayBufferToBase64(combined);
     },
 
     // Encrypt binary data (for files)
@@ -185,8 +198,8 @@ window.cryptoHelper = {
         // Return as base64 strings for proper C# deserialization
         // Blazor can't deserialize JavaScript arrays directly to byte[]
         return {
-            iv: btoa(String.fromCharCode(...iv)),
-            encryptedData: btoa(String.fromCharCode(...new Uint8Array(encrypted))),
+            iv: this.arrayBufferToBase64(iv),
+            encryptedData: this.arrayBufferToBase64(encrypted),
             tag: "" // GCM tag is appended to ciphertext automatically
         };
     },
@@ -254,7 +267,7 @@ window.cryptoHelper = {
             );
 
             // Return as base64 string for C# deserialization
-            return btoa(String.fromCharCode(...new Uint8Array(decrypted)));
+            return this.arrayBufferToBase64(decrypted);
         } catch (error) {
             console.error('❌ Decryption error:', error);
             throw error;

@@ -5,88 +5,151 @@
     Layout = "_Layout";
 }
 
-<div class="max-w-md w-full px-6 py-12">
-    <!-- Logo -->
-    <div class="text-center mb-8">
-        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white border border-slate-200 mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
+<div class="min-h-screen flex bg-slate-50">
+    <!-- Left Panel - Branding -->
+    <div class="hidden lg:flex lg:w-1/2 bg-trustworthy-dark p-12 flex-col justify-between relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-0 left-0 w-96 h-96 bg-trustworthy-cyan rounded-full filter blur-3xl"></div>
+            <div class="absolute bottom-0 right-0 w-96 h-96 bg-trustworthy-cyan rounded-full filter blur-3xl"></div>
         </div>
-        <h1 class="text-3xl font-semibold text-slate-800">HeritageVault</h1>
-        <p class="text-slate-500 mt-2 text-sm">สร้างบัญชีใหม่เพื่อเริ่มต้นใช้งาน</p>
+
+        <div class="relative z-10">
+            <a href="http://localhost:5082" class="inline-flex items-center gap-2 text-white/90 hover:text-white transition text-sm font-medium">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                กลับหน้าหลัก
+            </a>
+
+            <div class="mt-16">
+                <h1 class="text-6xl font-extrabold text-white mb-4 tracking-tight">อุ่นใจ</h1>
+                <p class="text-2xl text-trustworthy-cyan font-semibold mb-2">Ounjai Family OS</p>
+                <p class="text-white/90 mt-4 text-lg leading-relaxed">ระบบปฏิบัติการครอบครัว<br/>ที่ปลอดภัยที่สุด</p>
+            </div>
+        </div>
+
+        <div class="relative z-10 space-y-5">
+            <div class="flex items-start gap-4 bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                <div class="w-14 h-14 bg-trustworthy-cyan rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                    <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-white font-bold mb-1 text-base">Zero-Knowledge Encryption</h3>
+                    <p class="text-white/80 text-sm leading-relaxed">เซิร์ฟเวอร์ไม่สามารถเข้าถึงข้อมูลของคุณได้</p>
+                </div>
+            </div>
+
+            <div class="flex items-start gap-4 bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                <div class="w-14 h-14 bg-trustworthy-cyan rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                    <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-white font-bold mb-1 text-base">AES-256 Encryption</h3>
+                    <p class="text-white/80 text-sm leading-relaxed">มาตรฐานการเข้ารหัสระดับธนาคาร</p>
+                </div>
+            </div>
+
+            <div class="flex items-start gap-4 bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                <div class="w-14 h-14 bg-trustworthy-cyan rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
+                    <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-white font-bold mb-1 text-base">Family Sharing</h3>
+                    <p class="text-white/80 text-sm leading-relaxed">แบ่งปันเอกสารกับครอบครัวอย่างปลอดภัย</p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Card -->
-    <div class="main-card rounded-3xl p-8 md:p-10">
-        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-        {
-            <div class="error-message">@Model.ErrorMessage</div>
-        }
+    <!-- Right Panel - Form -->
+    <div class="flex-1 flex items-center justify-center p-8">
+        <div class="w-full max-w-md">
+            <div class="mb-8">
+                <a href="http://localhost:5082" class="lg:hidden inline-flex items-center gap-2 mb-6 text-slate-400 hover:text-trustworthy-dark transition text-sm font-medium">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    กลับหน้าหลัก
+                </a>
+                <h2 class="text-3xl font-bold text-trustworthy-dark leading-tight">เริ่มต้นใช้งาน</h2>
+                <p class="text-slate-500 mt-2">สมัครวันนี้ ทดลองใช้ฟีเจอร์พรีเมียมฟรี 14 วัน</p>
+            </div>
 
-        <!-- Loading State Overlay -->
-        <div id="loadingOverlay" class="hidden absolute inset-0 bg-white/80 rounded-3xl flex-col items-center justify-center z-10">
-            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-amber-700 mb-3"></div>
-            <p class="text-slate-600 font-medium text-sm animate-pulse">กำลังสร้างกุญแจเข้ารหัส...</p>
-        </div>
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+                    @Model.ErrorMessage
+                </div>
+            }
 
-        <form method="post" id="registerForm" class="relative">
-            <!-- Hidden Fields for Encryption Data -->
-            <input asp-for="EncryptedMasterKey" type="hidden" id="EncryptedMasterKey" />
-            <input asp-for="KeyDerivationSalt" type="hidden" id="KeyDerivationSalt" />
-            <input asp-for="KeyDerivationIterations" type="hidden" id="KeyDerivationIterations" value="100000" />
+            <!-- Loading State Overlay -->
+            <div id="loadingOverlay" class="hidden fixed inset-0 bg-white/90 flex-col items-center justify-center z-50">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-trustworthy-cyan mb-4"></div>
+                <p class="text-slate-600 font-medium animate-pulse">กำลังสร้างกุญแจเข้ารหัส...</p>
+            </div>
 
-            <div class="space-y-4">
+            <form method="post" id="registerForm" class="space-y-4">
+                <!-- Hidden Fields for Encryption Data -->
+                <input asp-for="EncryptedMasterKey" type="hidden" id="EncryptedMasterKey" />
+                <input asp-for="KeyDerivationSalt" type="hidden" id="KeyDerivationSalt" />
+                <input asp-for="KeyDerivationIterations" type="hidden" id="KeyDerivationIterations" value="100000" />
+
                 <div>
-                    <label class="block text-slate-700 text-sm font-medium mb-2 px-1">อีเมล</label>
-                    <input asp-for="Email" type="email" placeholder="example@email.com"
-                           class="input-field w-full px-4 py-3 rounded-xl text-slate-900" required />
-                    <span asp-validation-for="Email" class="text-red-500 text-xs"></span>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">อีเมล</label>
+                    <input asp-for="Email" type="email" placeholder="example@email.com" required
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-trustworthy-cyan/20 focus:border-trustworthy-cyan transition" />
+                    <span asp-validation-for="Email" class="text-red-500 text-xs mt-1 block"></span>
                 </div>
 
                 <div>
-                    <label class="block text-slate-700 text-sm font-medium mb-2 px-1">รหัสผ่าน</label>
-                    <input asp-for="Password" type="password" id="password" placeholder="อย่างน้อย 8 ตัวอักษร"
-                           class="input-field w-full px-4 py-3 rounded-xl text-slate-900" required />
-                    <span asp-validation-for="Password" class="text-red-500 text-xs"></span>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">รหัสผ่าน</label>
+                    <input asp-for="Password" type="password" id="password" placeholder="อย่างน้อย 8 ตัวอักษร" required
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-trustworthy-cyan/20 focus:border-trustworthy-cyan transition" />
+                    <span asp-validation-for="Password" class="text-red-500 text-xs mt-1 block"></span>
                 </div>
 
                 <div>
-                    <label class="block text-slate-700 text-sm font-medium mb-2 px-1">ยืนยันรหัสผ่าน</label>
-                    <input asp-for="ConfirmPassword" type="password" id="confirmPassword" placeholder="•••"
-                           class="input-field w-full px-4 py-3 rounded-xl text-slate-900" required />
-                    <span asp-validation-for="ConfirmPassword" class="text-red-500 text-xs"></span>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">ยืนยันรหัสผ่าน</label>
+                    <input asp-for="ConfirmPassword" type="password" id="confirmPassword" placeholder="ยืนยันรหัสผ่าน" required
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-trustworthy-cyan/20 focus:border-trustworthy-cyan transition" />
+                    <span asp-validation-for="ConfirmPassword" class="text-red-500 text-xs mt-1 block"></span>
                 </div>
 
                 <div>
-                    <label class="block text-slate-700 text-sm font-medium mb-2 px-1">เบอร์โทรศัพท์ (ไม่บังคับ)</label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">เบอร์โทรศัพท์ (ไม่บังคับ)</label>
                     <input asp-for="PhoneNumber" type="tel" placeholder="0812345678"
-                           class="input-field w-full px-4 py-3 rounded-xl text-slate-900" />
-                    <span asp-validation-for="PhoneNumber" class="text-red-500 text-xs"></span>
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-trustworthy-cyan/20 focus:border-trustworthy-cyan transition" />
+                    <span asp-validation-for="PhoneNumber" class="text-red-500 text-xs mt-1 block"></span>
                 </div>
 
                 <div class="pt-2">
-                    <button type="submit" id="submitBtn" class="btn-solid w-full py-4 rounded-xl text-white font-semibold transition-all active:scale-[0.99]">
-                        สมัครสมาชิก
+                    <button type="submit" id="submitBtn"
+                        class="w-full bg-trustworthy-cyan text-white py-4 rounded-xl font-bold hover:bg-cyan-600 transition shadow-lg shadow-cyan-200/50">
+                        สร้างบัญชีผู้ใช้
                     </button>
                 </div>
-            </div>
-        </form>
+            </form>
 
-        <div class="mt-6 text-center">
-            <p class="text-slate-600 text-sm">
-                มีบัญชีอยู่แล้ว? <a href="/Login" class="text-amber-800 font-medium hover:text-amber-700 transition-colors">เข้าสู่ระบบ</a>
-            </p>
-        </div>
-        
-        <div class="mt-8 pt-6 border-t border-slate-100">
-             <div class="flex items-center gap-3 text-xs text-slate-500 bg-slate-50 p-3 rounded-lg">
-                <svg class="w-5 h-5 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clip-rule="evenodd" />
-                </svg>
-                <span>
-                    <strong>Zero-Knowledge Encryption:</strong> รหัสผ่านของคุณจะถูกใช้เพื่อสร้างกุญแจเข้ารหัสบนเครื่องของคุณเท่านั้น เซิร์ฟเวอร์จะไม่ทราบรหัสผ่านหรือกุญแจจริงของคุณ
-                </span>
+            <div class="mt-8 text-center">
+                <p class="text-sm text-slate-500">มีบัญชีอยู่แล้ว? <a href="/Login" class="text-trustworthy-cyan font-bold hover:underline">เข้าสู่ระบบ</a></p>
+            </div>
+
+            <div class="mt-6 lg:hidden">
+                <div class="flex items-start gap-3 text-xs text-slate-500 bg-slate-50 p-3 rounded-lg">
+                    <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 8a6 6 0 01-7.743 5.743L10 14l-1 1-1 1H6v2H2v-4l4.257-4.257A6 6 0 1118 8zm-6-4a1 1 0 100 2 2 2 0 012 2 1 1 0 102 0 4 4 0 00-4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <span>
+                        <strong>Zero-Knowledge Encryption:</strong> รหัสผ่านของคุณจะถูกใช้เพื่อสร้างกุญแจเข้ารหัสบนเครื่องของคุณเท่านั้น เซิร์ฟเวอร์จะไม่ทราบรหัสผ่านหรือกุญแจจริงของคุณ
+                    </span>
+                </div>
             </div>
         </div>
     </div>
@@ -94,12 +157,10 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    
+
     <script>
-        // Zero-Knowledge Encryption Logic
         const ITERATIONS = 100000;
-        
-        // Helper: Convert ArrayBuffer to Base64
+
         function arrayBufferToBase64(buffer) {
             let binary = '';
             const bytes = new Uint8Array(buffer);
@@ -114,7 +175,6 @@
             const encoder = new TextEncoder();
             const passwordBuffer = encoder.encode(password);
 
-            // Import password
             const keyMaterial = await window.crypto.subtle.importKey(
                 'raw',
                 passwordBuffer,
@@ -123,7 +183,6 @@
                 ['deriveBits', 'deriveKey']
             );
 
-            // Derive key
             return await window.crypto.subtle.deriveKey(
                 {
                     name: 'PBKDF2',
@@ -139,8 +198,6 @@
         }
 
         async function encryptMasterKey(masterKey, passwordKey) {
-            // IV for master key encryption does not need to be stored separately 
-            // if we prepend it. Here we generated a random IV.
             const iv = window.crypto.getRandomValues(new Uint8Array(12));
 
             const encrypted = await window.crypto.subtle.encrypt(
@@ -152,7 +209,6 @@
                 masterKey
             );
 
-            // Combine IV + Encrypted Data
             const combined = new Uint8Array(iv.length + encrypted.byteLength);
             combined.set(iv);
             combined.set(new Uint8Array(encrypted), iv.length);
@@ -163,51 +219,36 @@
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            // Basic client-side validation check
+
             if (password !== confirmPassword) {
-                // Let ASP.NET validation handle the UI, but don't waste time encrypting
-                return; 
+                return;
             }
-            
-            // Check if hidden fields are already populated (prevent infinite loop)
+
             if (document.getElementById('EncryptedMasterKey').value) {
                 return;
             }
 
-            // Stop submission to perform encryption
             e.preventDefault();
-            
-            // Show loading
+
             document.getElementById('loadingOverlay').classList.remove('hidden');
             document.getElementById('loadingOverlay').classList.add('flex');
-            
+
             try {
-                // 1. Generate Random Master Key (32 bytes / 256 bits)
                 const masterKey = window.crypto.getRandomValues(new Uint8Array(32));
-                
-                // 2. Generate Salt (16 bytes)
                 const salt = window.crypto.getRandomValues(new Uint8Array(16));
-                
-                // 3. Derive Key from Password
                 const passwordKey = await deriveKeyFromPassword(password, salt);
-                
-                // 4. Encrypt Master Key
                 const encryptedMasterKey = await encryptMasterKey(masterKey, passwordKey);
-                
-                // 5. Populate Hidden Fields
+
                 document.getElementById('EncryptedMasterKey').value = arrayBufferToBase64(encryptedMasterKey);
                 document.getElementById('KeyDerivationSalt').value = arrayBufferToBase64(salt);
                 document.getElementById('KeyDerivationIterations').value = ITERATIONS;
-                
-                // 6. Submit the form
+
                 this.submit();
-                
+
             } catch (err) {
                 console.error("Encryption Error:", err);
                 alert("เกิดข้อผิดพลาดในกระบวนการเข้ารหัสความปลอดภัย: " + err.message);
-                
-                // Hide loading
+
                 document.getElementById('loadingOverlay').classList.add('hidden');
                 document.getElementById('loadingOverlay').classList.remove('flex');
             }

@@ -230,7 +230,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowBlazorClient", policy =>
     {
         policy.WithOrigins(
-                "http://localhost:5000",  // BFF HTTP
+                "http://localhost:5001",  // BFF HTTP (changed from 5000 due to macOS AirPlay conflict)
                 "https://localhost:5001", // BFF HTTPS
                 "http://localhost:5067",  // Blazor WebAssembly direct (dev only)
                 "https://localhost:7067", // Blazor HTTPS direct (dev only)

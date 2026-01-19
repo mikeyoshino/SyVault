@@ -1,7 +1,7 @@
 @inherits LayoutComponentBase
 @inject NavigationManager Navigation
 
-<div class="flex min-h-screen bg-[#F8FAFC] font-['Anuphan'] text-slate-900">
+<div class="flex min-h-screen bg-slate-50 font-['Anuphan'] text-slate-900">
     <!-- Mobile Overlay -->
     @if (_showDrawer)
     {
@@ -14,18 +14,18 @@
             class="@(_sidebarCollapsed ? "flex flex-col items-center mb-10 px-2" : "flex items-center justify-between mb-10 px-2")">
             <div class="@(_sidebarCollapsed ? "flex flex-col items-center space-y-2" : "flex items-center space-x-3") cursor-pointer"
                 @onclick="@(() => Navigation.NavigateTo("/"))">
-                <div class="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-200">
+                <div class="bg-trustworthy-cyan p-2 rounded-xl shadow-lg">
                     <i class="fas fa-shield-halved text-white"></i>
                 </div>
                 @if (!_sidebarCollapsed)
                 {
-                    <span class="text-2xl font-black text-slate-800 tracking-tight">Trustworthy</span>
+                    <span class="text-2xl font-black text-white tracking-tight">อุ่นใจ</span>
                 }
             </div>
             <!-- Close button for mobile -->
             @if (!_sidebarCollapsed)
             {
-                <button class="lg:hidden text-slate-400 hover:text-slate-600" @onclick="CloseDrawer">
+                <button class="lg:hidden text-white/70 hover:text-white" @onclick="CloseDrawer">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             }
@@ -134,19 +134,19 @@
 
         @if (!_sidebarCollapsed)
         {
-            <div class="mt-auto pt-6 border-t border-slate-100">
-                <div class="flex items-center space-x-3 px-3 py-4 bg-slate-50 rounded-2xl">
+            <div class="mt-auto pt-6 border-t border-white/10">
+                <div class="flex items-center space-x-3 px-3 py-4 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10">
                     <div
-                        class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-bold">
+                        class="w-10 h-10 rounded-full bg-trustworthy-cyan flex items-center justify-center text-white font-bold shadow-lg">
                         SJ
                     </div>
                     <div>
-                        <p class="text-sm font-bold text-slate-800">สมชาย ใจดี</p>
-                        <p class="text-[11px] text-slate-500">Family Plan</p>
+                        <p class="text-sm font-bold text-white">สมชาย ใจดี</p>
+                        <p class="text-[11px] text-white/60">Family Plan</p>
                     </div>
                 </div>
                 <button @onclick="Logout"
-                    class="w-full mt-4 flex items-center justify-center space-x-2 px-4 py-3 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all">
+                    class="w-full mt-4 flex items-center justify-center space-x-2 px-4 py-3 text-white/70 hover:text-red-400 hover:bg-white/5 rounded-xl transition-all">
                     <i class="fas fa-sign-out-alt"></i>
                     <span class="text-sm font-medium">ออกจากระบบ</span>
                 </button>
@@ -239,7 +239,7 @@
         <header
             class="h-20 bg-white/80 backdrop-blur-xl border-b border-slate-100 px-4 sm:px-8 flex items-center justify-between sticky top-0 z-30">
             <!-- Mobile Menu Button -->
-            <button class="lg:hidden text-slate-600 hover:text-blue-600 mr-4" @onclick="ToggleDrawer">
+            <button class="lg:hidden text-slate-600 hover:text-trustworthy-cyan mr-4" @onclick="ToggleDrawer">
                 <i class="fas fa-bars text-xl"></i>
             </button>
 
@@ -249,11 +249,11 @@
                         <i class="fas fa-search"></i>
                     </div>
                     <input type="text" placeholder="ค้นหาข้อมูลครอบครัวของคุณ..."
-                        class="w-full bg-slate-100/50 border-none rounded-2xl py-2.5 pl-12 pr-4 text-sm focus:bg-white focus:ring-4 focus:ring-blue-50/50 outline-none transition-all" />
+                        class="w-full bg-slate-100/50 border-none rounded-2xl py-2.5 pl-12 pr-4 text-sm focus:bg-white focus:ring-4 focus:ring-trustworthy-cyan/20 outline-none transition-all" />
                 </div>
             </div>
             <button @onclick="OpenAddModal"
-                class="ml-4 bg-blue-600 hover:bg-blue-700 text-white px-3 sm:px-5 py-2.5 rounded-xl text-sm font-bold flex items-center shadow-lg shadow-blue-200 transition-all">
+                class="ml-4 bg-trustworthy-dark hover:bg-slate-800 text-white px-3 sm:px-5 py-2.5 rounded-xl text-sm font-bold flex items-center shadow-lg transition-all">
                 <i class="fas fa-plus sm:mr-2"></i>
                 <span class="hidden sm:inline">เพิ่มรายการ</span>
             </button>
@@ -296,7 +296,7 @@
                         ยกเลิก
                     </button>
                     <button type="submit"
-                        class="flex-1 py-3 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-100 active:scale-95 transition-all">
+                        class="flex-1 py-3 bg-trustworthy-cyan text-white font-semibold rounded-xl hover:bg-cyan-600 shadow-lg shadow-cyan-100 active:scale-95 transition-all">
                         บันทึก
                     </button>
                 </div>
@@ -308,9 +308,9 @@
 @code {
     private string GetSidebarClasses()
     {
-        var baseClasses = "bg-white border-r border-slate-100 flex flex-col p-6 transition-all duration-300 ease-in-out";
+        var baseClasses = "bg-trustworthy-dark border-r border-white/10 flex flex-col p-6 transition-all duration-300 ease-in-out";
         var widthClass = _sidebarCollapsed ? "w-20" : "w-72";
-        var desktopClasses = "hidden lg:flex";
+        var desktopClasses = "hidden lg:flex lg:relative";
         var mobileClasses = _showDrawer
         ? "fixed inset-y-0 left-0 z-50 translate-x-0"
         : "fixed inset-y-0 left-0 z-50 -translate-x-full";

@@ -1,0 +1,198 @@
+@page
+@inject IConfiguration Configuration
+@model IndexModel
+@{
+    ViewData["Title"] = "ระบบปฏิบัติการสำหรับครอบครัว";
+    var gatewayUrl = Configuration["GatewayUrl"] ?? "http://localhost:5042";
+}
+
+<!-- Navigation -->
+<nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-20">
+            <div class="flex items-center gap-8">
+                <a href="/" class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-trustworthy-dark rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold tracking-tight text-trustworthy-dark">อุ่นใจ</span>
+                </a>
+                <div class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
+                    <a href="#features" class="hover:text-trustworthy-dark transition">ทำไมต้องอุ่นใจ</a>
+                    <a href="#features" class="hover:text-trustworthy-dark transition">ฟีเจอร์</a>
+                    <a href="#pricing" class="hover:text-trustworthy-dark transition">ราคา</a>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="@gatewayUrl/login" class="text-sm font-medium text-slate-600 hover:text-trustworthy-dark">เข้าสู่ระบบ</a>
+                <a href="@gatewayUrl/register" class="bg-trustworthy-cyan text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-cyan-600 transition shadow-lg shadow-cyan-200">เริ่มใช้งานฟรี</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<main class="relative pt-16 pb-24 lg:pt-32 lg:pb-40 overflow-hidden bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="lg:grid lg:grid-cols-2 lg:gap-12 items-center">
+            <div class="mb-16 lg:mb-0">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-50 text-trustworthy-cyan text-xs font-bold uppercase tracking-wider mb-6">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-cyan-500"></span>
+                    </span>
+                    ใหม่: ระบบแดชบอร์ดภาษาไทยเต็มรูปแบบ
+                </div>
+                <h1 class="text-5xl lg:text-7xl font-extrabold text-trustworthy-dark leading-tight mb-8">
+                    ระบบปฏิบัติการ<br><span class="text-trustworthy-cyan">สำหรับครอบครัว</span>
+                </h1>
+                <p class="text-lg text-slate-600 mb-10 max-w-lg leading-relaxed">
+                    จัดการเอกสารสำคัญ รหัสผ่าน ประกัน และข้อมูลทรัพย์สินของครอบครัวคุณไว้ในที่เดียวที่ปลอดภัยที่สุด พร้อมเข้าถึงได้ทุกที่ทุกเวลา
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="@gatewayUrl/register" class="bg-trustworthy-dark text-white px-8 py-4 rounded-full text-lg font-bold hover:bg-slate-800 transition shadow-xl">
+                        เริ่มต้นสร้าง Family OS
+                    </a>
+                    <button class="flex items-center justify-center gap-2 border border-slate-200 px-8 py-4 rounded-full text-lg font-semibold hover:bg-slate-50 transition">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"></path>
+                        </svg>
+                        ดูวิดีโอแนะนำ
+                    </button>
+                </div>
+            </div>
+            <div class="relative">
+                <div class="absolute -inset-4 bg-gradient-to-tr from-cyan-100 to-blue-50 rounded-3xl blur-2xl opacity-50 -z-10"></div>
+                <div class="bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden transform lg:rotate-2 hover:rotate-0 transition duration-500">
+                    <div class="bg-slate-50 border-b border-slate-100 px-4 py-3 flex gap-1.5">
+                        <div class="w-2.5 h-2.5 rounded-full bg-red-400"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-yellow-400"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-green-400"></div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-8">
+                            <h3 class="font-bold text-slate-800">แดชบอร์ดครอบครัวของคุณ</h3>
+                            <div class="w-8 h-8 rounded-full bg-cyan-100 text-trustworthy-cyan flex items-center justify-center text-xs font-bold">AJ</div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+                                <div class="w-8 h-8 mb-3 text-cyan-500">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                </div>
+                                <div class="text-xs text-slate-400">เอกสารสำคัญ</div>
+                                <div class="font-bold text-slate-700">24 รายการ</div>
+                            </div>
+                            <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+                                <div class="w-8 h-8 mb-3 text-cyan-500">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                    </svg>
+                                </div>
+                                <div class="text-xs text-slate-400">รหัสผ่าน</div>
+                                <div class="font-bold text-slate-700">128 รายการ</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Features Section -->
+<section id="features" class="py-20 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-trustworthy-dark mb-4">ครบทุกอย่างที่คุณต้องการ</h2>
+            <p class="text-slate-600 text-lg">จัดการทุกอย่างของครอบครัวในที่เดียว</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition">
+                <div class="w-12 h-12 bg-cyan-100 text-trustworthy-cyan rounded-xl flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-3">ความปลอดภัยระดับธนาคาร</h3>
+                <p class="text-slate-600">เข้ารหัสข้อมูลด้วย AES-256 และ Zero-Knowledge Architecture มีเพียงคุณเท่านั้นที่เข้าถึงได้</p>
+            </div>
+            <div class="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition">
+                <div class="w-12 h-12 bg-cyan-100 text-trustworthy-cyan rounded-xl flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-3">จัดการเอกสารสำคัญ</h3>
+                <p class="text-slate-600">เก็บประกัน ใบรับรอง และเอกสารทุกชนิดไว้ในที่เดียว เข้าถึงได้ทุกที่ทุกเวลา</p>
+            </div>
+            <div class="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition">
+                <div class="w-12 h-12 bg-cyan-100 text-trustworthy-cyan rounded-xl flex items-center justify-center mb-4">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800 mb-3">แชร์กับครอบครัว</h3>
+                <p class="text-slate-600">กำหนดสิทธิ์การเข้าถึงและแชร์ข้อมูลให้คนในครอบครัวได้อย่างปลอดภัย</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section id="pricing" class="py-20 bg-trustworthy-dark text-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-4xl font-bold mb-4">เริ่มต้นใช้งานวันนี้</h2>
+        <p class="text-cyan-100 text-lg mb-8">ทดลองใช้ฟีเจอร์พรีเมียมฟรี 14 วัน ไม่ต้องใส่บัตรเครดิต</p>
+        <a href="@gatewayUrl/register" class="inline-block bg-trustworthy-cyan text-white px-10 py-4 rounded-full text-lg font-bold hover:bg-cyan-600 transition shadow-2xl shadow-cyan-500/50">
+            สร้างบัญชีฟรี
+        </a>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-slate-900 text-slate-400 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-4 gap-8 mb-8">
+            <div>
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="w-8 h-8 bg-trustworthy-dark rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                    <span class="text-lg font-bold text-white">อุ่นใจ</span>
+                </div>
+                <p class="text-sm">ระบบปฏิบัติการสำหรับครอบครัว</p>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-4">ผลิตภัณฑ์</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#features" class="hover:text-white transition">ฟีเจอร์</a></li>
+                    <li><a href="#pricing" class="hover:text-white transition">ราคา</a></li>
+                    <li><a href="#" class="hover:text-white transition">ความปลอดภัย</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-4">บริษัท</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#" class="hover:text-white transition">เกี่ยวกับเรา</a></li>
+                    <li><a href="#" class="hover:text-white transition">ติดต่อ</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-4">กฎหมาย</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="/privacy" class="hover:text-white transition">นโยบายความเป็นส่วนตัว</a></li>
+                    <li><a href="/terms" class="hover:text-white transition">ข้อกำหนดการใช้งาน</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="border-t border-slate-800 pt-8 text-center text-sm">
+            <p>&copy; 2026 อุ่นใจ (Ounjai). All rights reserved.</p>
+        </div>
+    </div>
+</footer>
